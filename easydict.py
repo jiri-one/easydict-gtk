@@ -1,0 +1,89 @@
+import gi
+
+gi.require_version("Gtk", "3.0")
+gi.require_version('WebKit2', '4.0')
+gi.require_version("XApp", "1.0")
+from gi.repository import Gtk, WebKit2, Gdk, XApp
+# imports from my other files with classes and methods
+from html_generator import CreateHtml, db_search
+from tray_menu import TrayMenu
+from handlers import Handlers
+from settings import cwd, cwd_images, Settings
+
+
+# I inherit from pure classes with just methods
+class EasyDict(Handlers, Settings):
+	def __init__(self):
+		"""
+		Build GUI
+		"""
+		#My variables and classes
+		self.cwd = cwd
+		self.cwd_images = cwd_images
+		self.create_html = CreateHtml()
+		self.db_search = db_search
+		
+		# Build GUI from Glade file
+		self.builder = Gtk.Builder()
+		self.builder.add_from_file(self.cwd + "easydict.glade") # this file have to be in same directory like easydict.py file
+		
+		# get objects
+		gui = self.builder.get_object
+		self.window = gui("window") # main window
+		self.box_dicts = gui("box_dicts") # scrolled window for dicts
+		self.entry_search = gui("entry_search") # searched word object
+		self.entry_search.set_activates_default(True) # set Enter to act with default widget=button_search
+		self.button_fulltext = gui("button_fulltext") # for toggle button state
+		self.button_search = gui("button_search") # search button
+		self.popover_language = gui("popover_language") # popover for right button mouse click
+		self.button_search.grab_default() # set search button for default if user hits Enter
+		self.image_language = gui("image_language") # flag of current language
+		self.button_easydict = gui("button_easydict") # buton for main menu in HeaderBar
+		self.popover_main_menu = gui("popover_main_menu") # main menu popover
+		self.dialog_about = gui("dialog_about") # about dialog
+		self.dialog_help = gui("dialog_help") # help dialog
+		self.dialog_settings = gui("dialog_settings") # settings dialog
+		self.webview = WebKit2.WebView() # because of bug in Glade, it have to be declared here, not in Glade
+		self.box_dicts.add(self.webview) # add webkit webview to scrolled window
+		self.webview.load_html(self.create_html.default_html, "file://") # not necessary row, but maybe nice welcome image is good!
+
+		# tray icon (I am using XAppStatusIcon, because it is last working solution for GKT)
+		self.tray = XApp.StatusIcon()
+		self.tray.set_icon_name(self.cwd_images + "ed_tray_icon.png")
+		self.tray.set_tooltip_text("EasyDict - The open translator")
+		self.tray.connect("button-press-event", self.onTrayClicked)
+		self.menu = TrayMenu() # tray icon menu from class TrayMenu in file tray_menu.py
+		self.menu.item1.connect("activate", self.onSettingsClicked) # connect menu item Settings
+		self.menu.item2.connect("activate", self.onHelpClicked) # connect menu item Help
+		self.menu.item3.connect("activate", self.onAboutClicked) # connect menu item About
+		self.menu.item4.connect("activate", self.onExitClicked) # connect menu item Exit
+		self.tray.set_secondary_menu(self.menu)
+		
+		# clipboard function
+		self.clipboard = Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD)
+		self.clipboard.connect("owner-change", self.onClipboard)
+		
+		# settings objects
+		self.checkbutton_scan = gui("checkbutton_scan")
+		self.combobox_language = gui("combobox_language")
+		
+		# connect signals from builder
+		self.builder.connect_signals(self)		
+		
+		# initiate user settings
+		self.initiate_settings()
+		
+		# final settings and show (hidden) windows
+		self.window.props.visible = False
+		self.window.set_icon_from_file(self.cwd_images + "ed_icon.png")
+		self.window.set_keep_above(True)
+		#self.window.show_all() It is commented, because I need first start the windows hidden in tray
+		
+if __name__ == '__main__':
+	gui = EasyDict()
+	Gtk.main()
+
+
+
+
+
