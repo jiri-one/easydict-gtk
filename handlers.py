@@ -5,7 +5,7 @@ from gi.repository import Gtk, Gdk
 
 class Handlers:
 	def onXButton(self, *args):
-		# the customizet headbar without close button is used, but not all DE respects it
+		# the customized headbar without close button is used, but not all DE respects it
 		self.window.hide()
 		return True
 	

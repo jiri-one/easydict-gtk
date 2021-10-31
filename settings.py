@@ -4,10 +4,10 @@ from tinydb.middlewares import CachingMiddleware
 # import my ORJSON extension for TinyDB
 from orjson_storage import ORJSONStorage
 # import to set current working directory
-from os import getcwd
+from pathlib import Path
 
 # set current working directory
-cwd = getcwd() + "/"
+cwd = str(Path(__file__).parent) + "/"
 cwd_images = cwd + "images/"
 
 # main db with eng-cze dict (name just db, but table is eng_cze and EasyDict works with that table)
