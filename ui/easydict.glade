@@ -1,29 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.36.0 -->
+<!-- Generated with glade 3.38.2 -->
 <interface>
   <requires lib="gtk+" version="3.22"/>
   <!-- interface-local-resource-path . -->
   <object class="GtkAboutDialog" id="dialog_about">
-    <property name="can_focus">False</property>
-    <property name="type_hint">dialog</property>
-    <property name="program_name">EasyDict</property>
-    <property name="version">0.1</property>
+    <property name="can-focus">False</property>
+    <property name="destroy-with-parent">True</property>
+    <property name="type-hint">normal</property>
+    <property name="program-name">EasyDict</property>
+    <property name="version">0.2</property>
     <property name="copyright" translatable="yes">The program itself is distributed under the GPL 3.0, but the dictionary data is governed by the license listed on the website http://svobodneslovniky.cz, which is GNU/FDL.</property>
     <property name="website">http://easydict.jiri.one</property>
-    <property name="website_label" translatable="yes">http://easydict.jiri.one</property>
+    <property name="website-label" translatable="yes">http://easydict.jiri.one</property>
     <property name="authors">Jiří Němec</property>
     <property name="artists">Jiří Martin</property>
-    <property name="logo">images/ed_icon.png</property>
-    <property name="license_type">gpl-3-0</property>
+    <property name="logo">../images/ed_icon.png</property>
+    <property name="license-type">gpl-3-0</property>
     <child internal-child="vbox">
       <object class="GtkBox">
-        <property name="can_focus">False</property>
+        <property name="can-focus">False</property>
         <property name="orientation">vertical</property>
         <property name="spacing">2</property>
         <child internal-child="action_area">
           <object class="GtkButtonBox">
-            <property name="can_focus">False</property>
-            <property name="layout_style">end</property>
+            <property name="can-focus">False</property>
+            <property name="layout-style">end</property>
             <child>
               <placeholder/>
             </child>
@@ -37,29 +38,27 @@
             <property name="position">0</property>
           </packing>
         </child>
-        <child>
-          <placeholder/>
-        </child>
       </object>
-    </child>
-    <child type="titlebar">
-      <placeholder/>
     </child>
   </object>
   <object class="GtkDialog" id="dialog_settings">
-    <property name="can_focus">False</property>
-    <property name="default_width">400</property>
-    <property name="default_height">300</property>
-    <property name="type_hint">dialog</property>
+    <property name="can-focus">False</property>
+    <property name="border-width">6</property>
+    <property name="title" translatable="yes">Configure EasyDict</property>
+    <property name="modal">True</property>
+    <property name="default-width">400</property>
+    <property name="default-height">300</property>
+    <property name="destroy-with-parent">True</property>
+    <property name="type-hint">normal</property>
     <child internal-child="vbox">
       <object class="GtkBox">
-        <property name="can_focus">False</property>
+        <property name="can-focus">False</property>
         <property name="orientation">vertical</property>
         <property name="spacing">2</property>
         <child internal-child="action_area">
           <object class="GtkButtonBox">
-            <property name="can_focus">False</property>
-            <property name="layout_style">end</property>
+            <property name="can-focus">False</property>
+            <property name="layout-style">end</property>
             <child>
               <placeholder/>
             </child>
@@ -70,18 +69,18 @@
           <packing>
             <property name="expand">False</property>
             <property name="fill">False</property>
-            <property name="position">0</property>
+            <property name="position">1</property>
           </packing>
         </child>
         <child>
           <object class="GtkBox">
             <property name="visible">True</property>
-            <property name="can_focus">False</property>
+            <property name="can-focus">False</property>
             <property name="orientation">vertical</property>
             <child>
               <object class="GtkLabel">
                 <property name="visible">True</property>
-                <property name="can_focus">False</property>
+                <property name="can-focus">False</property>
                 <property name="label" translatable="yes">EasyDict settings:</property>
               </object>
               <packing>
@@ -95,12 +94,12 @@
               <object class="GtkCheckButton" id="checkbutton_scan">
                 <property name="label" translatable="yes">Clipboard scan</property>
                 <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="receives_default">False</property>
-                <property name="tooltip_text" translatable="yes">This settings will enable/disable the clipboard scanning</property>
+                <property name="can-focus">True</property>
+                <property name="receives-default">False</property>
+                <property name="tooltip-text" translatable="yes">This settings will enable/disable the clipboard scanning</property>
                 <property name="halign">start</property>
-                <property name="image_position">right</property>
-                <property name="draw_indicator">True</property>
+                <property name="image-position">right</property>
+                <property name="draw-indicator">True</property>
                 <signal name="toggled" handler="onCheckbuttonScanToggled" swapped="no"/>
               </object>
               <packing>
@@ -116,11 +115,11 @@
             <child>
               <object class="GtkBox">
                 <property name="visible">True</property>
-                <property name="can_focus">False</property>
+                <property name="can-focus">False</property>
                 <child>
                   <object class="GtkLabel">
                     <property name="visible">True</property>
-                    <property name="can_focus">False</property>
+                    <property name="can-focus">False</property>
                     <property name="halign">start</property>
                     <property name="label" translatable="yes">Default language for search:</property>
                   </object>
@@ -133,7 +132,7 @@
                 <child>
                   <object class="GtkComboBoxText" id="combobox_language">
                     <property name="visible">True</property>
-                    <property name="can_focus">False</property>
+                    <property name="can-focus">False</property>
                     <items>
                       <item id="eng" translatable="yes">English</item>
                       <item id="cze" translatable="yes">Czech</item>
@@ -156,7 +155,7 @@
             <child>
               <object class="GtkLabel">
                 <property name="visible">True</property>
-                <property name="can_focus">False</property>
+                <property name="can-focus">False</property>
                 <property name="label" translatable="yes">(More settings will come later.)</property>
               </object>
               <packing>
@@ -170,52 +169,49 @@
           <packing>
             <property name="expand">False</property>
             <property name="fill">True</property>
-            <property name="position">1</property>
+            <property name="position">2</property>
           </packing>
         </child>
       </object>
     </child>
-    <child type="titlebar">
-      <placeholder/>
-    </child>
   </object>
   <object class="GtkImage" id="ed_pref_icon">
-    <property name="width_request">15</property>
-    <property name="height_request">15</property>
+    <property name="width-request">15</property>
+    <property name="height-request">15</property>
     <property name="visible">True</property>
-    <property name="can_focus">False</property>
-    <property name="pixbuf">images/ed_pref_icon.png</property>
+    <property name="can-focus">False</property>
+    <property name="pixbuf">../images/ed_pref_icon.png</property>
   </object>
   <object class="GtkImage" id="image_language">
     <property name="visible">True</property>
-    <property name="can_focus">False</property>
-    <property name="pixbuf">images/flag_eng.svg</property>
+    <property name="can-focus">False</property>
+    <property name="pixbuf">../images/flag_eng.svg</property>
   </object>
   <object class="GtkWindow" id="window">
-    <property name="can_focus">False</property>
+    <property name="can-focus">False</property>
     <property name="resizable">False</property>
-    <property name="window_position">mouse</property>
-    <property name="default_width">360</property>
-    <property name="default_height">640</property>
-    <property name="deletable">False</property>
+    <property name="window-position">mouse</property>
+    <property name="default-width">360</property>
+    <property name="default-height">640</property>
+    <property name="skip-taskbar-hint">True</property>
     <property name="gravity">north-east</property>
     <signal name="delete-event" handler="onXButton" swapped="no"/>
     <child>
       <object class="GtkBox" id="box_main">
         <property name="visible">True</property>
-        <property name="can_focus">False</property>
+        <property name="can-focus">False</property>
         <property name="orientation">vertical</property>
         <child>
           <object class="GtkBox" id="box_search">
             <property name="visible">True</property>
-            <property name="can_focus">False</property>
+            <property name="can-focus">False</property>
             <child>
               <object class="GtkEntry" id="entry_search">
                 <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="has_focus">True</property>
-                <property name="is_focus">True</property>
-                <property name="max_length">50</property>
+                <property name="can-focus">True</property>
+                <property name="has-focus">True</property>
+                <property name="is-focus">True</property>
+                <property name="max-length">50</property>
                 <signal name="changed" handler="onNonEmptyText" swapped="no"/>
                 <signal name="icon-press" handler="onTrashPress" swapped="no"/>
               </object>
@@ -228,14 +224,14 @@
             <child>
               <object class="GtkButton" id="button_search">
                 <property name="label">Search </property>
-                <property name="height_request">-1</property>
+                <property name="height-request">-1</property>
                 <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="can_default">True</property>
-                <property name="receives_default">True</property>
+                <property name="can-focus">True</property>
+                <property name="can-default">True</property>
+                <property name="receives-default">True</property>
                 <property name="image">image_language</property>
-                <property name="image_position">right</property>
-                <property name="always_show_image">True</property>
+                <property name="image-position">right</property>
+                <property name="always-show-image">True</property>
                 <signal name="clicked" handler="onSearchClicked" swapped="no"/>
                 <signal name="event" handler="onSearchRightClick" swapped="no"/>
               </object>
@@ -255,15 +251,15 @@
         <child>
           <object class="GtkBox" id="box_radio">
             <property name="visible">True</property>
-            <property name="can_focus">False</property>
+            <property name="can-focus">False</property>
             <child>
               <object class="GtkRadioButton" id="button_whole">
                 <property name="label" translatable="yes">Whole word</property>
                 <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="receives_default">False</property>
+                <property name="can-focus">True</property>
+                <property name="receives-default">False</property>
                 <property name="active">True</property>
-                <property name="draw_indicator">False</property>
+                <property name="draw-indicator">False</property>
               </object>
               <packing>
                 <property name="expand">True</property>
@@ -275,9 +271,9 @@
               <object class="GtkRadioButton" id="button_fulltext">
                 <property name="label" translatable="yes">Fulltext</property>
                 <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="receives_default">False</property>
-                <property name="draw_indicator">False</property>
+                <property name="can-focus">True</property>
+                <property name="receives-default">False</property>
+                <property name="draw-indicator">False</property>
                 <property name="group">button_whole</property>
               </object>
               <packing>
@@ -296,8 +292,8 @@
         <child>
           <object class="GtkScrolledWindow" id="box_dicts">
             <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <property name="shadow_type">in</property>
+            <property name="can-focus">True</property>
+            <property name="shadow-type">in</property>
             <child>
               <placeholder/>
             </child>
@@ -313,16 +309,16 @@
     <child type="titlebar">
       <object class="GtkHeaderBar" id="header">
         <property name="visible">True</property>
-        <property name="can_focus">False</property>
+        <property name="can-focus">False</property>
         <property name="title" translatable="yes">EasyDict</property>
-        <property name="subtitle" translatable="yes">Open translator</property>
+        <property name="subtitle" translatable="yes">Completely open translator</property>
         <child>
           <object class="GtkButton" id="button_easydict">
             <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <property name="receives_default">True</property>
+            <property name="can-focus">True</property>
+            <property name="receives-default">True</property>
             <property name="image">ed_pref_icon</property>
-            <property name="always_show_image">True</property>
+            <property name="always-show-image">True</property>
             <signal name="clicked" handler="onEasyDictClicked" swapped="no"/>
           </object>
         </child>
@@ -330,23 +326,23 @@
     </child>
   </object>
   <object class="GtkPopover" id="popover_language">
-    <property name="can_focus">False</property>
-    <property name="border_width">5</property>
-    <property name="relative_to">button_search</property>
+    <property name="can-focus">False</property>
+    <property name="border-width">5</property>
+    <property name="relative-to">button_search</property>
     <child>
       <object class="GtkBox" id="box_language">
         <property name="visible">True</property>
-        <property name="can_focus">False</property>
-        <property name="margin_start">5</property>
-        <property name="margin_end">5</property>
-        <property name="margin_top">5</property>
-        <property name="margin_bottom">5</property>
+        <property name="can-focus">False</property>
+        <property name="margin-start">5</property>
+        <property name="margin-end">5</property>
+        <property name="margin-top">5</property>
+        <property name="margin-bottom">5</property>
         <property name="orientation">vertical</property>
         <property name="spacing">1</property>
         <child>
           <object class="GtkLabel" id="label_language">
             <property name="visible">True</property>
-            <property name="can_focus">False</property>
+            <property name="can-focus">False</property>
             <property name="label" translatable="yes">Search in:</property>
           </object>
           <packing>
@@ -358,8 +354,8 @@
         <child>
           <object class="GtkModelButton" id="button_eng">
             <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <property name="receives_default">True</property>
+            <property name="can-focus">True</property>
+            <property name="receives-default">True</property>
             <property name="text" translatable="yes">English</property>
             <property name="centered">True</property>
             <signal name="clicked" handler="onLangClicked" swapped="no"/>
@@ -373,8 +369,8 @@
         <child>
           <object class="GtkModelButton" id="button_cze">
             <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <property name="receives_default">True</property>
+            <property name="can-focus">True</property>
+            <property name="receives-default">True</property>
             <property name="text" translatable="yes">Czech</property>
             <property name="centered">True</property>
             <signal name="clicked" handler="onLangClicked" swapped="no"/>
@@ -389,19 +385,19 @@
     </child>
   </object>
   <object class="GtkPopover" id="popover_main_menu">
-    <property name="can_focus">False</property>
-    <property name="border_width">10</property>
-    <property name="relative_to">button_easydict</property>
+    <property name="can-focus">False</property>
+    <property name="border-width">10</property>
+    <property name="relative-to">button_easydict</property>
     <child>
       <object class="GtkBox" id="box_main_menu">
         <property name="visible">True</property>
-        <property name="can_focus">False</property>
+        <property name="can-focus">False</property>
         <property name="orientation">vertical</property>
         <child>
           <object class="GtkModelButton" id="button_settings">
             <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <property name="receives_default">True</property>
+            <property name="can-focus">True</property>
+            <property name="receives-default">True</property>
             <property name="text" translatable="yes">Settings</property>
             <signal name="clicked" handler="onSettingsClicked" swapped="no"/>
           </object>
@@ -414,8 +410,8 @@
         <child>
           <object class="GtkModelButton" id="button_help">
             <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <property name="receives_default">True</property>
+            <property name="can-focus">True</property>
+            <property name="receives-default">True</property>
             <property name="text" translatable="yes">Help</property>
             <signal name="clicked" handler="onHelpClicked" swapped="no"/>
           </object>
@@ -428,8 +424,8 @@
         <child>
           <object class="GtkModelButton" id="button_about">
             <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <property name="receives_default">True</property>
+            <property name="can-focus">True</property>
+            <property name="receives-default">True</property>
             <property name="text" translatable="yes">About</property>
             <signal name="clicked" handler="onAboutClicked" swapped="no"/>
           </object>
@@ -442,8 +438,8 @@
         <child>
           <object class="GtkModelButton" id="button_exit">
             <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <property name="receives_default">True</property>
+            <property name="can-focus">True</property>
+            <property name="receives-default">True</property>
             <property name="text" translatable="yes">Exit EasyDict</property>
             <signal name="clicked" handler="onExitClicked" swapped="no"/>
           </object>
@@ -589,21 +585,22 @@ Note: most of this text is adopted from the website http://svobodneslovniky.cz
 </property>
   </object>
   <object class="GtkDialog" id="dialog_help">
-    <property name="can_focus">False</property>
-    <property name="window_position">mouse</property>
-    <property name="default_width">800</property>
-    <property name="default_height">600</property>
-    <property name="type_hint">dialog</property>
-    <property name="skip_taskbar_hint">True</property>
+    <property name="can-focus">False</property>
+    <property name="title" translatable="yes">Help window</property>
+    <property name="window-position">center-on-parent</property>
+    <property name="default-width">800</property>
+    <property name="default-height">600</property>
+    <property name="type-hint">normal</property>
+    <property name="skip-taskbar-hint">True</property>
     <child internal-child="vbox">
       <object class="GtkBox">
-        <property name="can_focus">False</property>
+        <property name="can-focus">False</property>
         <property name="orientation">vertical</property>
         <property name="spacing">2</property>
         <child internal-child="action_area">
           <object class="GtkButtonBox">
-            <property name="can_focus">False</property>
-            <property name="layout_style">end</property>
+            <property name="can-focus">False</property>
+            <property name="layout-style">end</property>
             <child>
               <placeholder/>
             </child>
@@ -620,17 +617,17 @@ Note: most of this text is adopted from the website http://svobodneslovniky.cz
         <child>
           <object class="GtkScrolledWindow">
             <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <property name="hscrollbar_policy">never</property>
-            <property name="shadow_type">in</property>
+            <property name="can-focus">True</property>
+            <property name="hscrollbar-policy">never</property>
+            <property name="shadow-type">in</property>
             <child>
               <object class="GtkTextView" id="textview_help">
                 <property name="visible">True</property>
-                <property name="can_focus">True</property>
+                <property name="can-focus">True</property>
                 <property name="editable">False</property>
-                <property name="wrap_mode">word</property>
+                <property name="wrap-mode">word</property>
                 <property name="buffer">textbuffer_help</property>
-                <property name="accepts_tab">False</property>
+                <property name="accepts-tab">False</property>
                 <property name="monospace">True</property>
               </object>
             </child>
@@ -642,9 +639,6 @@ Note: most of this text is adopted from the website http://svobodneslovniky.cz
           </packing>
         </child>
       </object>
-    </child>
-    <child type="titlebar">
-      <placeholder/>
     </child>
   </object>
 </interface>

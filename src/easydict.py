@@ -25,7 +25,7 @@ class EasyDict(Handlers, Settings):
 		
 		# Build GUI from Glade file
 		self.builder = Gtk.Builder()
-		self.builder.add_from_file(self.cwd + "easydict.glade") # this file have to be in same directory like easydict.py file
+		self.builder.add_from_file(str(self.cwd / "ui" / "easydict.glade")) # this file have to be in same directory like easydict.py file
 		
 		# get objects
 		gui = self.builder.get_object
@@ -46,10 +46,15 @@ class EasyDict(Handlers, Settings):
 		self.webview = WebKit2.WebView() # because of bug in Glade, it have to be declared here, not in Glade
 		self.box_dicts.add(self.webview) # add webkit webview to scrolled window
 		self.webview.load_html(self.create_html.default_html, "file://") # not necessary row, but maybe nice welcome image is good!
+		
+		# get HeaderBar and set it
+		self.header = gui("header") # HeaderBar
+		self.header.set_decoration_layout('menu:close')
+		self.header.props.show_close_button = True
 
 		# tray icon (I am using XAppStatusIcon, because it is last working solution for GKT)
 		self.tray = XApp.StatusIcon()
-		self.tray.set_icon_name(self.cwd_images + "ed_tray_icon.png")
+		self.tray.set_icon_name(str(self.cwd_images / "ed_tray_icon.png"))
 		self.tray.set_tooltip_text("EasyDict - The open translator")
 		self.tray.connect("button-press-event", self.onTrayClicked)
 		self.menu = TrayMenu() # tray icon menu from class TrayMenu in file tray_menu.py
@@ -75,8 +80,11 @@ class EasyDict(Handlers, Settings):
 		
 		# final settings and show (hidden) windows
 		self.window.props.visible = False
-		self.window.set_icon_from_file(self.cwd_images + "ed_icon.png")
+		self.window.set_icon_from_file(str(self.cwd_images / "ed_icon.png"))
 		self.window.set_keep_above(True)
+		self.dialog_about.set_keep_above(True)
+		self.dialog_help.set_keep_above(True)
+		self.dialog_settings.set_keep_above(True)
 		#self.window.show_all() It is commented, because I need first start the windows hidden in tray
 		
 if __name__ == '__main__':
