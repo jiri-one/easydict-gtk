@@ -27,9 +27,12 @@ class EasyDict(Handlers, Settings):
 		self.builder = Gtk.Builder()
 		self.builder.add_from_file(str(self.cwd / "ui" / "easydict.glade"))
 		
-		# get objects
+		# get objects and set them
 		gui = self.builder.get_object
 		self.window = gui("window") # main window
+		self.header = gui("header") # HeaderBar
+		self.header.set_decoration_layout('menu:close') # set HeaderBar decoration to show only close button
+		self.header.props.show_close_button = True	# allow to show close button in HeaderBar	
 		self.box_dicts = gui("box_dicts") # scrolled window for dicts
 		self.entry_search = gui("entry_search") # searched word object
 		self.entry_search.set_activates_default(True) # set Enter to act with default widget=button_search
@@ -47,10 +50,6 @@ class EasyDict(Handlers, Settings):
 		self.box_dicts.add(self.webview) # add webkit webview to scrolled window
 		self.webview.load_html(self.create_html.default_html, "file://") # not necessary row, but maybe nice welcome image is good!
 		
-		# get HeaderBar and set it
-		self.header = gui("header") # HeaderBar
-		self.header.set_decoration_layout('menu:close')
-		self.header.props.show_close_button = True
 
 		# tray icon (I am using XAppStatusIcon, because it is last working solution for GKT)
 		self.tray = XApp.StatusIcon()

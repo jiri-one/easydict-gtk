@@ -211,6 +211,7 @@
                 <property name="can-focus">True</property>
                 <property name="has-focus">True</property>
                 <property name="is-focus">True</property>
+                <property name="tooltip-text" translatable="yes">Write the word, which you need to tranlate here.</property>
                 <property name="max-length">50</property>
                 <signal name="changed" handler="onNonEmptyText" swapped="no"/>
                 <signal name="icon-press" handler="onTrashPress" swapped="no"/>
@@ -229,6 +230,7 @@
                 <property name="can-focus">True</property>
                 <property name="can-default">True</property>
                 <property name="receives-default">True</property>
+                <property name="tooltip-text" translatable="yes">Use right button to change language.</property>
                 <property name="image">image_language</property>
                 <property name="image-position">right</property>
                 <property name="always-show-image">True</property>
@@ -252,6 +254,7 @@
           <object class="GtkBox" id="box_radio">
             <property name="visible">True</property>
             <property name="can-focus">False</property>
+            <property name="tooltip-text" translatable="yes">Switch between Fulltext search and Whole word search.</property>
             <child>
               <object class="GtkRadioButton" id="button_whole">
                 <property name="label" translatable="yes">Whole word</property>
