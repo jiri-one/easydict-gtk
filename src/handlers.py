@@ -9,18 +9,18 @@ class Handlers:
 		self.window.hide()
 		return True
 	
-	def onSearchClicked(self, button):		
-		if self.entry_search.props.text_length > 0: # user is not able to send empty query	
+	def onSearchClicked(self, button):
+		if self.entry_search.props.text_length > 0: # user is not able to send empty query
 			self.results = self.db_search(self.language, self.entry_search.get_text(), self.button_fulltext.get_active())
-			self.html = self.create_html.finish_html(self.results)
-			self.webview.load_html(self.html)			
+			self.html = self.create_html(self.results, self.language)
+			self.webview.load_html(self.html)
 	
 	def onLangClicked(self, button):
 		if button.props.text == "English":
 			self.language = 'eng'
 		if button.props.text == "Czech":
 			self.language = 'cze'
-		self.image_language.props.file = self.cwd_images + f"flag_{self.language}.svg"
+		self.image_language.props.file = str(self.cwd_images / f"flag_{self.language}.svg")
 	
 	def onSearchRightClick(self, button, event):
 		# detects if the right mouse button is pressed https://lazka.github.io/pgi-docs/Gdk-3.0/classes/Event.html#Gdk.Event.get_button

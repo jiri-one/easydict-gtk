@@ -14,31 +14,35 @@ def db_search(language, text, fulltext):
     return sorted(results_with_matchratio, key=lambda x: x[1], reverse=True)
 
 class CreateHtml:
-    default_html = f"""
-    <!DOCTYPE html>
-    <html>
-    <body style="background-color:#2d2d2d;", oncontextmenu="return false">
-    <p style="font-size: 22px;text-align:center;"><b><span style="color: #ffffff;">Welcome to EasyDict</span></b></p>
-    <p style="text-align:center;"><img src="{str(cwd_images / "ed_icon.png")}"></p>
-    <p style="font-size: 22px;text-align:center;"><span style="color: #ffffff;">The first open source translator which is completely open with dictionary data too.</span></p>
-    </body>
-    </html>"""    
+    def __init__(self):
+        self.default_html = f"""
+        <!DOCTYPE html>
+        <html>
+        <body style="background-color:#2d2d2d;", oncontextmenu="return false">
+        <p style="font-size: 22px;text-align:center;"><b><span style="color: #ffffff;">Welcome to EasyDict</span></b></p>
+        <p style="text-align:center;"><img src="{str(cwd_images / "ed_icon.png")}"></p>
+        <p style="font-size: 22px;text-align:center;"><span style="color: #ffffff;">The first open source translator which is completely open with dictionary data too.</span></p>
+        </body>
+        </html>"""    
     
-    def finish_html(self, results):
-        self.html_string = """
+    def __call__(self, results, language):
+        self.language = language
+        self.second_language = [lang for lang in ["cze", "eng"] if lang != language][0]
+        html_string = """
         <!DOCTYPE html>
         <html>
         <body style="background-color:#2d2d2d;", oncontextmenu="return false">
         """        
         for row in results:
-            self.html_string = self.html_string + self.create_html(row[0])
-        self.html_string = self.html_string + """
+            html_string = html_string + self.create_html(row[0])
+        html_string = html_string + """
         </body>
         </html>
         """
-        return self.html_string
-            
+        return html_string
+    
     def create_html(self, row):
+        """Create html code for one row."""
         if "notes" in row.keys():
             self.notes =  ", " + row["notes"]
         else:
@@ -46,11 +50,12 @@ class CreateHtml:
         if "special" in row.keys():
             self.special = ", "  + row["special"]
         else:
-            self.special = ""        
+            self.special = ""
+       
     
         html = f"""
-        <p style="font-size: 22px"><b><span style="color: #ffffff;">{row["eng"]}</span></b>
-        <br>&emsp;<span style="color: #ffffff;">{row["cze"]}{self.notes}{self.special}</span>
+        <p style="font-size: 22px"><b><span style="color: #ffffff;">{row[self.language]}</span></b>
+        <br>&emsp;<span style="color: #ffffff;">{row[self.second_language]}{self.notes}{self.special}</span>
         </p>
         """
         return html

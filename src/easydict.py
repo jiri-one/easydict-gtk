@@ -25,7 +25,7 @@ class EasyDict(Handlers, Settings):
 		
 		# Build GUI from Glade file
 		self.builder = Gtk.Builder()
-		self.builder.add_from_file(str(self.cwd / "ui" / "easydict.glade")) # this file have to be in same directory like easydict.py file
+		self.builder.add_from_file(str(self.cwd / "ui" / "easydict.glade"))
 		
 		# get objects
 		gui = self.builder.get_object
