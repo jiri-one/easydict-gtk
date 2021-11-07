@@ -5,7 +5,7 @@ with open('README.md') as f:
 
 setup(
 	name='easydict',
-	version='0.3.4',
+	version='0.3.5',
 	description='The first open source translator which is completely open with dictionary data too.',
 	long_description=long_description,
 	long_description_content_type="text/markdown",
