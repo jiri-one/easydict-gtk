@@ -4,4 +4,4 @@ easydict.glade~
 /.tox/
 /easydict.egg-info/
 venv
-
+dist
