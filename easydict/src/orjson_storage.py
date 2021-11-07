@@ -1,8 +1,8 @@
 import orjson
 from tinydb import Storage
 
-
 class ORJSONStorage(Storage):
+	"""This is Storage only for EasyDict, I don't testet it for other purposes."""
 	def __init__(self, filename):
 		self.filename = filename
 		print(filename)
