@@ -5,10 +5,10 @@ gi.require_version('WebKit2', '4.0')
 gi.require_version("XApp", "1.0")
 from gi.repository import Gtk, WebKit2, Gdk, XApp
 # imports from my other files with classes and methods
-from html_generator import CreateHtml, db_search
-from tray_menu import TrayMenu
-from handlers import Handlers
-from settings import cwd, cwd_images, Settings
+from .html_generator import CreateHtml, db_search
+from .tray_menu import TrayMenu
+from .handlers import Handlers
+from .settings import cwd, cwd_images, Settings
 
 
 # I inherit from pure classes with just methods
@@ -86,7 +86,7 @@ class EasyDict(Handlers, Settings):
 		self.dialog_settings.set_keep_above(True)
 		#self.window.show_all() It is commented, because I need first start the windows hidden in tray
 		
-if __name__ == '__main__':
+def main():
 	gui = EasyDict()
 	Gtk.main()
 

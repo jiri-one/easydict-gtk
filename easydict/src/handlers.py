@@ -49,10 +49,11 @@ class Handlers:
 	def onClipboard(self, clippboard, event):
 		if self.window.props.visible: # first condition is check, if the window is shown
 			if self.checkbutton_scan.get_active(): # second condition is state of check button for clipboard scan, it can be from prefdb, but this is maybe better
-				if len(self.clipboard.wait_for_text().split()) == 1: # third condition is check, if in clipboard is just one word
-					# three consecutive conditions look little bit ugly, but it make sense and it is better then logical and
-					self.entry_search.set_text(self.clipboard.wait_for_text()) # text from clipboard added to search entry
-					self.onSearchClicked(None) # run search method which will show results in webview
+				if self.clipboard.wait_for_text() != None: # if clipboard was something else, result is None, else is text, which is converted to UTF-8
+					if len(self.clipboard.wait_for_text().split()) == 1: # this condition is check, if in clipboard is just one word
+						# three consecutive conditions look little bit ugly, but it make sense and it is better then logical and
+						self.entry_search.set_text(self.clipboard.wait_for_text()) # text from clipboard added to search entry
+						self.onSearchClicked(None) # run search method which will show results in webview
 	
 	def onNonEmptyText(self, *args):
 		if self.entry_search.get_text():

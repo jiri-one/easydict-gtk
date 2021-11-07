@@ -1,2 +1,7 @@
 __pycache__
 easydict.glade~
+*.pyc
+/.tox/
+/easydict.egg-info/
+venv
+
