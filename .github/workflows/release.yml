@@ -1,0 +1,17 @@
+name: GH Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+jobs:
+  github-release:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@master
+    - name: Release
+      uses: softprops/action-gh-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+

@@ -3,5 +3,7 @@ easydict.glade~
 *.pyc
 /.tox/
 /easydict.egg-info/
+/easydict_gtk.egg-info/
+/easydict-gtk.egg-info/
 venv
 dist

@@ -1,11 +1,11 @@
-from setuptools import setup, find_packages
+from setuptools import setup
 
 with open('README.md') as f:
 	long_description = ''.join(f.readlines())
 
 setup(
-	name='easydict',
-	version='0.3.5',
+	name='easydict-gtk',
+	version='v0.3.6',
 	description='The first open source translator which is completely open with dictionary data too.',
 	long_description=long_description,
 	long_description_content_type="text/markdown",
@@ -14,7 +14,7 @@ setup(
 	author_email='nemec@jiri.one',
 	keywords='translator,dict',
 	license='GPL3',
-	url='https://github.com/jiri-one/easydict_gtk',
+	url='https://github.com/jiri-one/easydict-gtk',
 	include_package_data=True,
 	classifiers=[
 		'Intended Audience :: End Users/Desktop',

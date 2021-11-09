@@ -31,7 +31,7 @@ Screenshots
 How to install it and use it
 ---
 Because, the app is writen in Python, you can simply install from PyPi:
-`pip install easydict`
+`pip install easydict-gtk`
 and run it with:
 `easydict-gtk`
 
