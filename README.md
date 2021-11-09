@@ -2,10 +2,6 @@
 The first open source translator which is completely open with dictionary data too. The homepage is http://easydict.jiri.one. On this page you can also try the search results, which will be the same as in the app (however, the web application does not use TinyDB+orjson as a backend, but uses RethinkDB - the source data is the same). 
 **The application is at an early stage of development, but the features and dictionaries that have already been implemented work very well.**
 
-## Table of Contents
-
-[TOC]
-
 ## What is it
 
 EasyDict is a simple translator that will translate, typically, one word in one language into another language. This translator has several, sometimes unique, features. 
@@ -44,8 +40,8 @@ To-Do-List
 - [X] get the homepage https://easydict.jiri.one back online
 - [ ] create tests for backend
 - [ ] add the possibility to use other dictionaries
-- [ ] optimize the application for touch control so that it can be run on Phosh - https://puri.sm/projects/phosh/ using libhanda - https://gitlab.gnome.org/GNOME/libhandy
-- [ ] ? maybe swith to poetry
+- [ ] optimize the application for touch control so that it can be run on Phosh - https://puri.sm/projects/phosh/ using libhandy - https://gitlab.gnome.org/GNOME/libhandy
+- [X] ? maybe swith to poetry
 - [ ] create FlatPak package and publish it on FlatHub
 - [ ] create ArchLinux package an publish it on AUR
 - [ ] ...

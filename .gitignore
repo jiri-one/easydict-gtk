@@ -6,4 +6,5 @@ easydict.glade~
 /easydict_gtk.egg-info/
 /easydict-gtk.egg-info/
 venv
+test_venv
 dist
