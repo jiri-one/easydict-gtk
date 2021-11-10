@@ -6,7 +6,10 @@ from gi.repository import Gtk, Gdk
 class Handlers:
 	def onXButton(self, *args):
 		"""This is used to hide main window, when the close button (X) is pressed"""
-		self.window.hide()
+		if self.tray != None:
+			self.window.hide()
+		else:
+			self.window.iconify() # minize it on gnome or there, where aro not XApps
 		return True
 	
 	def onSearchClicked(self, button):

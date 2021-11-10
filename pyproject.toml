@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "easydict-gtk"
-version = "0.3.7"
+version = "0.3.8"
 description = "The first open source translator which is completely open with dictionary data too."
 authors = ["jiri.one <nemec@jiri.one>"]
 license = "GPL-3.0-only"

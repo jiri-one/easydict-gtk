@@ -2,14 +2,20 @@ import gi
 
 gi.require_version("Gtk", "3.0")
 gi.require_version('WebKit2', '4.0')
-gi.require_version("XApp", "1.0")
-from gi.repository import Gtk, WebKit2, Gdk, XApp
-# imports from my other files with classes and methods
-from .html_generator import CreateHtml, db_search
-from .tray_menu import TrayMenu
-from .handlers import Handlers
-from .settings import cwd, cwd_images, Settings
 
+from gi.repository import Gtk, WebKit2, Gdk
+from sys import modules
+try:
+	gi.require_version("XApp", "1.0")
+	from gi.repository.XApp import StatusIcon
+	from easydict_gtk.tray_menu import TrayMenu # import of TrayMenu makes sense only if XApps are presented
+except (ValueError, ModuleNotFoundError):
+	print("XApps not found, tray icon is not available.")
+from os import environ
+# imports from my other files with classes and methods
+from easydict_gtk.html_generator import CreateHtml, db_search
+from easydict_gtk.handlers import Handlers
+from easydict_gtk.settings import cwd, cwd_images, Settings
 
 # I inherit from pure classes with just methods
 class EasyDict(Handlers, Settings):
@@ -50,19 +56,6 @@ class EasyDict(Handlers, Settings):
 		self.box_dicts.add(self.webview) # add webkit webview to scrolled window
 		self.webview.load_html(self.create_html.default_html, "file://") # not necessary row, but maybe nice welcome image is good!
 		
-
-		# tray icon (I am using XAppStatusIcon, because it is last working solution for GKT)
-		self.tray = XApp.StatusIcon()
-		self.tray.set_icon_name(str(self.cwd_images / "ed_tray_icon.png"))
-		self.tray.set_tooltip_text("EasyDict - The open translator")
-		self.tray.connect("button-press-event", self.onTrayClicked)
-		self.menu = TrayMenu() # tray icon menu from class TrayMenu in file tray_menu.py
-		self.menu.item1.connect("activate", self.onSettingsClicked) # connect menu item Settings
-		self.menu.item2.connect("activate", self.onHelpClicked) # connect menu item Help
-		self.menu.item3.connect("activate", self.onAboutClicked) # connect menu item About
-		self.menu.item4.connect("activate", self.onExitClicked) # connect menu item Exit
-		self.tray.set_secondary_menu(self.menu)
-		
 		# clipboard function
 		self.clipboard = Gtk.Clipboard.get(Gdk.SELECTION_CLIPBOARD)
 		self.clipboard.connect("owner-change", self.onClipboard)
@@ -77,18 +70,34 @@ class EasyDict(Handlers, Settings):
 		# initiate user settings
 		self.initiate_settings()
 		
-		# final settings and show (hidden) windows
-		self.window.props.visible = False
+		# settings of windows
 		self.window.set_icon_from_file(str(self.cwd_images / "ed_icon.png"))
 		self.window.set_keep_above(True)
 		self.dialog_about.set_keep_above(True)
 		self.dialog_help.set_keep_above(True)
 		self.dialog_settings.set_keep_above(True)
-		#self.window.show_all() It is commented, because I need first start the windows hidden in tray
+		
+		# tray icon (I am using XAppStatusIcon, because it is last working solution for GTK)
+		if 'gi.repository.XApp' not in modules.keys() or environ.get("DESKTOP_SESSION") == "gnome": # if import of XApp was not succesful or we are on Gnome, where the tray is not exists 
+			self.tray = None # because of onXButton handler
+			self.window.show_all() # without show_all() the window will be hidden	
+		else:
+			self.tray = StatusIcon()
+			self.tray.set_icon_name(str(self.cwd_images / "ed_tray_icon.png"))
+			self.tray.set_tooltip_text("EasyDict - The open translator")
+			self.tray.connect("button-press-event", self.onTrayClicked)
+			self.menu = TrayMenu() # tray icon menu from class TrayMenu in file tray_menu.py
+			self.menu.item1.connect("activate", self.onSettingsClicked) # connect menu item Settings
+			self.menu.item2.connect("activate", self.onHelpClicked) # connect menu item Help
+			self.menu.item3.connect("activate", self.onAboutClicked) # connect menu item About
+			self.menu.item4.connect("activate", self.onExitClicked) # connect menu item Exit
+			self.tray.set_secondary_menu(self.menu)
+			self.window.props.visible = False			
 		
 def main():
 	gui = EasyDict()
 	Gtk.main()
+
 
 
 
