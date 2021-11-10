@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "easydict-gtk"
-version = "0.3.8"
+version = "0.3.9"
 description = "The first open source translator which is completely open with dictionary data too."
 authors = ["jiri.one <nemec@jiri.one>"]
 license = "GPL-3.0-only"
@@ -9,7 +9,7 @@ exclude = ["easydict_gtk/garbage"]
 
 
 [tool.poetry.dependencies]
-python = "^3.9"
+python = "^3.8"
 PyGObject = "^3.42.0"
 pycairo = "^1.20.1"
 tinydb = "^4.5.2"
