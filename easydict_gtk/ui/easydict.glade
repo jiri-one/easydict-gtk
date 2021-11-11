@@ -7,6 +7,7 @@
     <property name="can-focus">False</property>
     <property name="destroy-with-parent">True</property>
     <property name="type-hint">normal</property>
+    <property name="skip-taskbar-hint">True</property>
     <property name="program-name">EasyDict</property>
     <property name="version">0.2</property>
     <property name="copyright" translatable="yes">The program itself is distributed under the GPL 3.0, but the dictionary data is governed by the license listed on the website http://svobodneslovniky.cz, which is GNU/FDL.</property>
@@ -50,6 +51,7 @@
     <property name="default-height">300</property>
     <property name="destroy-with-parent">True</property>
     <property name="type-hint">normal</property>
+    <property name="skip-taskbar-hint">True</property>
     <child internal-child="vbox">
       <object class="GtkBox">
         <property name="can-focus">False</property>
@@ -193,7 +195,6 @@
     <property name="window-position">mouse</property>
     <property name="default-width">360</property>
     <property name="default-height">640</property>
-    <property name="skip-taskbar-hint">True</property>
     <property name="gravity">north-east</property>
     <signal name="delete-event" handler="onXButton" swapped="no"/>
     <child>

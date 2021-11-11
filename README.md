@@ -30,6 +30,10 @@ Because, the app is writen in Python, you can simply install from PyPi:
 `pip install easydict-gtk`
 and run it with:
 `easydict-gtk`
+The second option to install easydict-gtk is to use Flatpak:
+`flatpak install org.flatpak.easydict-gtk`
+and run it with:
+`flatpak run org.flatpak.easydict-gtk`
 
 Dependencies:
 ---

@@ -36,7 +36,7 @@ python-versions = ">=3.5,<4.0"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "c58ea2ecb493be459caeec1540bd928283f14c23bfe5739fd88d32d69a2fda49"
+content-hash = "c03aabf1039a7c92d653ca447fbb6234bdfa63a1349f9612b7cc42fb01ea5572"
 
 [metadata.files]
 orjson = [
