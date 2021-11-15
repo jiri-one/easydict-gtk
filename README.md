@@ -31,9 +31,9 @@ Because, the app is writen in Python, you can simply install from PyPi:
 and run it with:
 `easydict-gtk`
 The second option to install easydict-gtk is to use Flatpak:
-`flatpak install org.flatpak.easydict-gtk`
+`flatpak install -y one.jiri.easydict-gtk`
 and run it with:
-`flatpak run org.flatpak.easydict-gtk`
+`flatpak run one.jiri.easydict-gtk    `
 
 Dependencies:
 ---
@@ -46,6 +46,6 @@ To-Do-List
 - [ ] add the possibility to use other dictionaries
 - [ ] optimize the application for touch control so that it can be run on Phosh - https://puri.sm/projects/phosh/ using libhandy - https://gitlab.gnome.org/GNOME/libhandy
 - [X] ? maybe swith to poetry
-- [ ] create FlatPak package and publish it on FlatHub
+- [X] create FlatPak package and publish it on FlatHub
 - [ ] create ArchLinux package an publish it on AUR
 - [ ] ...

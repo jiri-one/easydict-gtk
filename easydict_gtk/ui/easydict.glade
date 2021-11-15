@@ -9,14 +9,14 @@
     <property name="type-hint">normal</property>
     <property name="skip-taskbar-hint">True</property>
     <property name="program-name">EasyDict</property>
-    <property name="version">0.2</property>
+    <property name="version">0.4</property>
     <property name="copyright" translatable="yes">The program itself is distributed under the GPL 3.0, but the dictionary data is governed by the license listed on the website http://svobodneslovniky.cz, which is GNU/FDL.</property>
     <property name="website">http://easydict.jiri.one</property>
     <property name="website-label" translatable="yes">http://easydict.jiri.one</property>
     <property name="authors">Jiří Němec</property>
     <property name="artists">Jiří Martin</property>
     <property name="logo">../images/ed_icon.png</property>
-    <property name="license-type">gpl-3-0</property>
+    <property name="license-type">gpl-3-0-only</property>
     <child internal-child="vbox">
       <object class="GtkBox">
         <property name="can-focus">False</property>
