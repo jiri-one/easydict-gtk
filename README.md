@@ -33,7 +33,8 @@ and run it with:
 The second option to install easydict-gtk is to use Flatpak:
 `flatpak install -y one.jiri.easydict-gtk`
 and run it with:
-`flatpak run one.jiri.easydict-gtk    `
+`flatpak run one.jiri.easydict-gtk`
+Note: In Flatpak version is not supported tray icon, if you need tray, you have to use classic version from PyPi or from source code.
 
 Dependencies:
 ---
