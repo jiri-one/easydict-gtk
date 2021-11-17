@@ -32,7 +32,9 @@ class Settings:
 			self.language = pref_search_language
 			self.combobox_language.set_active_id(pref_search_language)
 		except IndexError:
-			self.create_default_settings()		
+			self.create_default_settings()
+		# set the version from poetry pyproject.toml file
+		self.dialog_about.props.version = self.extract_version_from_toml()
 
 	def write_setting(self, name, value):
 		prefdb.update({'value': value}, where("settings") == name)
@@ -44,7 +46,8 @@ class Settings:
 		# after default values are set, call initiate_settings again
 		self.initiate_settings()
 	
-	def extract_version_from_toml():
+	def extract_version_from_toml(self):
+		"""Extract version from pyproject.toml file (poetry settings file)"""
 		toml_path = cwd.parent / 'pyproject.toml'
 		result = None
 		if toml_path.is_file():

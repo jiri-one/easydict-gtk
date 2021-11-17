@@ -14,7 +14,7 @@
     <property name="website-label" translatable="yes">http://easydict.jiri.one</property>
     <property name="authors">Jiří Němec</property>
     <property name="artists">Jiří Martin</property>
-    <property name="logo">../images/eb_icon.png</property>
+    <property name="logo">../images/ed_icon.png</property>
     <property name="license-type">gpl-3-0-only</property>
     <child internal-child="vbox">
       <object class="GtkBox">
