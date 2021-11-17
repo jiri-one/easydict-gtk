@@ -6,6 +6,7 @@ from easydict_gtk.orjson_storage import ORJSONStorage
 # import to set current working directory
 from pathlib import Path
 
+
 # set current working directory
 cwd = Path(__file__).parent
 cwd_images = cwd / "images"
@@ -42,5 +43,18 @@ class Settings:
 		prefdb.insert({'settings': 'clipboard_scan', 'value': True})
 		# after default values are set, call initiate_settings again
 		self.initiate_settings()
+	
+	def extract_version_from_toml():
+		toml_path = cwd.parent / 'pyproject.toml'
+		result = None
+		if toml_path.is_file():
+			with open(str(toml_path), "r") as f:
+				while result == None:
+					string=f.readline()
+					if 'version = ' in string:
+						result = string.split('"')[1]
+		return result
+	
+
 
 

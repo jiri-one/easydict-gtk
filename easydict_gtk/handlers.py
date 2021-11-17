@@ -88,4 +88,6 @@ class Handlers:
 		self.write_setting("search_language", combo.get_active_id())
 		# those next two lines means, that settings of language has immediate effect on the current search (it may not be necessary or desirable)
 		self.image_language.props.file = str(self.cwd_images / f"flag_{combo.get_active_id()}.svg")
-		self.language = combo.get_active_id()		
+		self.language = combo.get_active_id()
+	
+	
