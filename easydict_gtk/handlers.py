@@ -66,6 +66,10 @@ class Handlers:
 	
 	def onTrashPress(self, *args):
 		self.entry_search.set_text("")
+		
+	def onWindowSizeChange(self, widget, event):
+		window_width, window_height = self.window.get_size()
+		self.write_setting("window_size", [window_width, window_height])
 	
 	# handlers for dialogs
 	def onAboutClicked(self, *args):
