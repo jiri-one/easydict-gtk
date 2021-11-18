@@ -62,6 +62,7 @@ class EasyDict(Handlers, Settings):
 		
 		# settings objects
 		self.checkbutton_scan = gui("checkbutton_scan")
+		self.checkbutton_size = gui("checkbutton_size")
 		self.combobox_language = gui("combobox_language")
 		
 		# connect signals from builder

@@ -111,7 +111,23 @@
               </packing>
             </child>
             <child>
-              <placeholder/>
+              <object class="GtkCheckButton" id="checkbutton_size">
+                <property name="label" translatable="yes">Remember last main window size</property>
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="receives-default">False</property>
+                <property name="tooltip-text" translatable="yes">If is enabled, EasyDict will remember last window size</property>
+                <property name="halign">start</property>
+                <property name="image-position">right</property>
+                <property name="draw-indicator">True</property>
+                <signal name="toggled" handler="onCheckbuttonSizeToggled" swapped="no"/>
+              </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
+                <property name="padding">7</property>
+                <property name="position">2</property>
+              </packing>
             </child>
             <child>
               <object class="GtkBox">

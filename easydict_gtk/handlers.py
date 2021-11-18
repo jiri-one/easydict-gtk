@@ -68,8 +68,9 @@ class Handlers:
 		self.entry_search.set_text("")
 		
 	def onWindowSizeChange(self, widget, event):
-		window_width, window_height = self.window.get_size()
-		self.write_setting("window_size", [window_width, window_height])
+		if self.checkbutton_size.get_active():
+			window_width, window_height = self.window.get_size()
+			self.write_setting("window_size", [window_width, window_height])
 	
 	# handlers for dialogs
 	def onAboutClicked(self, *args):
@@ -87,6 +88,9 @@ class Handlers:
 	# settings handlers
 	def onCheckbuttonScanToggled(self, check_button):
 		self.write_setting("clipboard_scan", check_button.get_active())
+		
+	def onCheckbuttonSizeToggled(self, check_button):
+		self.write_setting("win_size_remember", check_button.get_active())	
 	
 	def onComboboxLanguageChanged(self, combo):
 		self.write_setting("search_language", combo.get_active_id())

@@ -27,13 +27,17 @@ class Settings:
 			# get setting of clippboard scan from db and set it
 			pref_clipboard_scan = prefdb.search(query["settings"] == "clipboard_scan")[0]["value"]
 			self.checkbutton_scan.props.active = pref_clipboard_scan
+			# get setting of window size remembering from db and set it
+			pref_win_size_remember = prefdb.search(query["settings"] == "win_size_remember")[0]["value"]
+			self.checkbutton_size.props.active = pref_win_size_remember
+			# get the window size from db and set it
+			window_width, window_height = prefdb.search(query["settings"] == "window_size")[0]["value"]
+			self.window.set_default_size(window_width, window_height)			
 			# get setting of search language from db and set it
 			pref_search_language = prefdb.search(query["settings"] == "search_language")[0]["value"]
 			self.image_language.props.file = str(self.cwd_images / f"flag_{pref_search_language}.svg")
 			self.language = pref_search_language
 			self.combobox_language.set_active_id(pref_search_language)
-			window_width, window_height = prefdb.search(query["settings"] == "window_size")[0]["value"]
-			self.window.set_default_size(window_width, window_height)
 		except IndexError:
 			self.create_default_settings()
 		# set the version from poetry pyproject.toml file
@@ -43,10 +47,11 @@ class Settings:
 		prefdb.update({'value': value}, where("settings") == name)
 	
 	def create_default_settings(self):
-		# default language settings and turn the clipboard scanning on
+		# set default settings
 		prefdb.upsert({'settings': 'search_language', 'value': "eng"}, query["settings"] == "search_language")
 		prefdb.upsert({'settings': 'clipboard_scan', 'value': True}, query["settings"] == "clipboard_scan")
 		prefdb.upsert({'settings': 'window_size', 'value': [360,640]}, query["settings"] == "window_size")
+		prefdb.upsert({'settings': 'win_size_remember', 'value': True}, query["settings"] == "win_size_remember")
 		# after default values are set, call initiate_settings again
 		self.initiate_settings()
 	
