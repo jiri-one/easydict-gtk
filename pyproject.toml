@@ -1,8 +1,8 @@
 [tool.poetry]
 name = "easydict-gtk"
-version = "0.4.1"
 description = "The first open source translator which is completely open with dictionary data too."
 authors = ["jiri.one <nemec@jiri.one>"]
+version = "0" # this value is not used anywhere
 license = "GPL-3.0-only"
 readme = "README.md"
 exclude = ["easydict_gtk/garbage"]
@@ -24,3 +24,5 @@ build-backend = "poetry.core.masonry.api"
 [tool.poetry.scripts]
 easydict-gtk = 'easydict_gtk.easydict:main'
 
+[tool.poetry-version-plugin]
+source = "init"

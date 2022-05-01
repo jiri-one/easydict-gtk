@@ -17,6 +17,7 @@ from easydict_gtk.html_generator import CreateHtml, db_search
 from easydict_gtk.handlers import Handlers
 from easydict_gtk.settings import cwd, cwd_images, Settings
 
+
 # I inherit from pure classes with just methods
 class EasyDict(Handlers, Settings):
 	def __init__(self):
@@ -98,9 +99,3 @@ class EasyDict(Handlers, Settings):
 def main():
 	gui = EasyDict()
 	Gtk.main()
-
-
-
-
-
-

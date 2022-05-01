@@ -5,6 +5,7 @@ from tinydb.middlewares import CachingMiddleware
 from easydict_gtk.orjson_storage import ORJSONStorage
 # import to set current working directory
 from pathlib import Path
+import easydict_gtk
 
 
 # set current working directory
@@ -40,8 +41,7 @@ class Settings:
 			self.combobox_language.set_active_id(pref_search_language)
 		except IndexError:
 			self.create_default_settings()
-		# set the version from poetry pyproject.toml file
-		self.dialog_about.props.version = self.extract_version_from_toml()
+		self.dialog_about.props.version = f"{easydict_gtk.__version__}"
 
 	def write_setting(self, name, value):
 		prefdb.update({'value': value}, where("settings") == name)
@@ -54,19 +54,6 @@ class Settings:
 		prefdb.upsert({'settings': 'win_size_remember', 'value': True}, query["settings"] == "win_size_remember")
 		# after default values are set, call initiate_settings again
 		self.initiate_settings()
+
+
 	
-	def extract_version_from_toml(self):
-		"""Extract version from pyproject.toml file (poetry settings file)"""
-		toml_path = cwd.parent / 'pyproject.toml'
-		result = None
-		if toml_path.is_file():
-			with open(str(toml_path), "r") as f:
-				while result == None:
-					string=f.readline()
-					if 'version = ' in string:
-						result = string.split('"')[1]
-		return result
-	
-
-
-
