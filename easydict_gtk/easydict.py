@@ -3,11 +3,12 @@ import sys
 from pathlib import Path
 
 gi.require_version("Gtk", "4.0")
-gi.require_version('Adw', '1')
+gi.require_version("Adw", "1")
 
 from gi.repository import Gtk, Adw
 from sys import modules
 from os import environ
+
 # imports from my other files with classes and methods
 
 package = Path(__file__).parent.parent
@@ -17,91 +18,126 @@ from easydict_gtk.html_generator import CreateHtml, db_search
 from easydict_gtk.handlers import Handlers
 from easydict_gtk.settings import cwd, cwd_images, Settings
 
+
 class MainWindow(Gtk.ApplicationWindow):
-	def __init__(self, *args, **kwargs):
-		super().__init__(*args, **kwargs)
-		# basic window settings
-		self.set_default_size(360, 640)
-		self.set_title("EasyDict-GTK")
-		# header bar
-		self.header = Gtk.HeaderBar()
-		self.set_titlebar(self.header)
-		pref_icon = Gtk.Image.new_from_file(str(Path(__file__).parent / "images/ed_pref_icon.png"))
-		self.open_button = Gtk.Button(label="Settings")
-		self.open_button.set_child(pref_icon)
-		self.header.pack_start(self.open_button)
-		# widget for data visualization
-		self.store = Gtk.ListStore(str, str, str, str)
-		treeiter1 = self.store.append(["test", "test", "test", "test", ])
-		treeiter2 = self.store.append(["test1", "test1", "test1", "test1", ])
-		treeiter3 = self.store.append(["test2", "test2", "test2", "test2", ])
-		treeview = Gtk.TreeView(model=self.store)
-		column = Gtk.TreeViewColumn("Results:")
-		cze = Gtk.CellRendererText()
-		eng = Gtk.CellRendererText()
-		column.pack_start(cze, True)
-		column.pack_start(eng, True)
-		column.add_attribute(cze, "text", 0)
-		column.add_attribute(eng, "text", 1)
-		select = treeview.get_selection()
-		select.connect("changed", self.on_tree_selection_changed)
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # some variables
+        self.search_fulltext = False
+        # basic window settings
+        self.set_default_size(360, 640)
+        self.set_title("EasyDict-GTK")
+        # header bar
+        self.header = Gtk.HeaderBar()
+        self.set_titlebar(self.header)
+        pref_icon = Gtk.Image.new_from_file(
+            str(Path(__file__).parent / "images/ed_pref_icon.png")
+        )
+        self.open_button = Gtk.Button(label="Settings")
+        self.open_button.set_child(pref_icon)
+        self.header.pack_start(self.open_button)
+        # widget for data visualization
+        self.store = Gtk.ListStore(str, str, str, str)
+        treeview = Gtk.TreeView(model=self.store)
+        column = Gtk.TreeViewColumn("Results:")
+        cze = Gtk.CellRendererText()
+        eng = Gtk.CellRendererText()
+        column.pack_start(cze, True)
+        column.pack_start(eng, True)
+        column.add_attribute(cze, "text", 0)
+        column.add_attribute(eng, "text", 1)
+        select = treeview.get_selection()
+        select.connect("changed", self.on_tree_selection_changed)
+        treeview.append_column(column)
 
-		treeview.append_column(column)
+        # main boxes
+        self.main_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
+        self.box2 = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
+        self.box3 = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
+        self.box4 = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
+        self.set_child(self.main_box)
+        self.button = Gtk.Button(label="Search")
+        self.dropdown = Gtk.DropDown.new_from_strings(["ENG", "CZE"])
+        self.button.connect("clicked", self.on_search)
+        self.entry = Gtk.Entry()
+        self.entry.props.hexpand = True
+        self.whole_word = Gtk.ToggleButton(label="Whole word")
+        self.whole_word.set_active(True)
+        self.fulltext = Gtk.ToggleButton(label="Fulltext")
+        self.fulltext.set_active(False)
+        self.fulltext.set_group(self.whole_word)
+        self.whole_word.props.hexpand = True
+        self.fulltext.props.hexpand = True
+        self.whole_word.connect("clicked", self.on_toggle)
+        self.fulltext.connect("clicked", self.on_toggle)
+        self.main_box.append(self.box2)
+        self.main_box.append(self.box3)
+        self.main_box.append(self.box4)
+        self.box2.append(self.entry)
+        self.box2.append(self.button)
+        self.box2.append(self.dropdown)
+        self.box3.append(self.whole_word)
+        self.box3.append(self.fulltext)
+        self.box4.append(treeview)
 
+    def on_search(self, button):
+        lng = self.dropdown.get_selected_item().props.string
+        # print(db_search(lng.lower(), self.entry.props.text, False))
+        self.store.clear()
+        for result in db_search(
+            lng.lower(), self.entry.props.text, self.search_fulltext
+        ):
+            treeiter = self.store.append(
+                [
+                    result["eng"],
+                    result["cze"],
+                    "test",
+                    "test",
+                ]
+            )
 
+    def on_toggle(self, button):
+        if button.props.label == "Fulltext":
+            self.search_type = "fulltext"
+            self.search_fulltext = True
+        elif button.props.label == "Whole word":
+            self.search_type = "whole_word"
+            self.search_fulltext = False
+        else:
+            self.search_type = "whole_word"
+            self.search_fulltext = False
 
+    def on_tree_selection_changed(self, selection):
+        model, treeiter = selection.get_selected()
+        if treeiter is not None:
+            print("You selected", model[treeiter][0])
 
-		# main boxes
-		self.main_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
-		self.box2 = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
-		self.box3 = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
-		self.set_child(self.main_box)
-		self.button = Gtk.Button(label="Search")
-		self.dropdown = Gtk.DropDown.new_from_strings(["ENG", "CZE"])
-		self.button.connect('clicked', self.hello)
-		self.entry = Gtk.Entry()
-		self.entry.props.hexpand = True
-		self.main_box.append(self.box2)
-		self.main_box.append(self.box3)
-		self.box2.append(self.entry)
-		self.box2.append(self.button)
-		self.box2.append(self.dropdown)
-		self.box3.append(treeview)
-
-	def hello(self, button):
-		print(button)
-		treeiter1 = self.store.append(["testik", "test", "test", "test", ])
-
-	def on_tree_selection_changed(self, selection):
-		model, treeiter = selection.get_selected()
-		if treeiter is not None:
-			print("You selected", model[treeiter][0])
 
 class EasyDict(Adw.Application):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.connect('activate', self.on_activate)
+        self.connect("activate", self.on_activate)
 
     def on_activate(self, app):
         self.win = MainWindow(application=app)
         self.win.present()
 
 
-
 def main(args=sys.argv[1:]):
-	import hupper
-	if '--reload' in args:
-		# start_reloader will only return in a monitored subprocess
-		reloader = hupper.start_reloader('easydict_gtk.easydict.main')
-		# monitor an extra file
-		# reloader.watch_files(['foo.ini'])
-		app = EasyDict(application_id="one.jiri.easydict")
-		app.run()
+    import hupper
+
+    if "--reload" in args:
+        # start_reloader will only return in a monitored subprocess
+        reloader = hupper.start_reloader("easydict_gtk.easydict.main")
+        # monitor an extra file
+        # reloader.watch_files(['foo.ini'])
+        app = EasyDict(application_id="one.jiri.easydict")
+        app.run()
+
 
 if __name__ == "__main__":
-	print("zde")
-	main()
-
+    print("zde")
+    main()
 
 
 #
