@@ -7,12 +7,6 @@ gi.require_version('Adw', '1')
 
 from gi.repository import Gtk, Adw
 from sys import modules
-try:
-	gi.require_version("XApp", "1.0")
-	from gi.repository.XApp import StatusIcon
-	from easydict_gtk.tray_menu import TrayMenu # import of TrayMenu makes sense only if XApps are presented
-except (ValueError, ModuleNotFoundError):
-	print("XApps not found, tray icon is not available.")
 from os import environ
 # imports from my other files with classes and methods
 
@@ -63,6 +57,7 @@ class MainWindow(Gtk.ApplicationWindow):
 		self.box3 = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
 		self.set_child(self.main_box)
 		self.button = Gtk.Button(label="Search")
+		self.dropdown = Gtk.DropDown.new_from_strings(["ENG", "CZE"])
 		self.button.connect('clicked', self.hello)
 		self.entry = Gtk.Entry()
 		self.entry.props.hexpand = True
@@ -70,6 +65,7 @@ class MainWindow(Gtk.ApplicationWindow):
 		self.main_box.append(self.box3)
 		self.box2.append(self.entry)
 		self.box2.append(self.button)
+		self.box2.append(self.dropdown)
 		self.box3.append(treeview)
 
 	def hello(self, button):
