@@ -56,6 +56,11 @@ class MainWindow(Gtk.ApplicationWindow):
         self.box3 = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
         self.box4 = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
         self.set_child(self.main_box)
+
+        self.scrollable_treelist = Gtk.ScrolledWindow()
+        self.scrollable_treelist.set_vexpand(True)
+        self.scrollable_treelist.set_child(treeview)
+
         self.button = Gtk.Button(label="Search")
         self.dropdown = Gtk.DropDown.new_from_strings(["ENG", "CZE"])
         self.button.connect("clicked", self.on_search)
@@ -78,7 +83,7 @@ class MainWindow(Gtk.ApplicationWindow):
         self.box2.append(self.dropdown)
         self.box3.append(self.whole_word)
         self.box3.append(self.fulltext)
-        self.box4.append(treeview)
+        self.box4.append(self.scrollable_treelist)
 
     def on_search(self, button):
         lng = self.dropdown.get_selected_item().props.string
