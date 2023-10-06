@@ -14,7 +14,7 @@ from os import environ
 package = Path(__file__).parent.parent
 sys.path.append(str(package))
 
-from easydict_gtk.html_generator import CreateHtml, db_search
+from easydict_gtk.utils import CreateHtml, db_search
 from easydict_gtk.handlers import Handlers
 from easydict_gtk.settings import cwd, cwd_images, Settings
 
@@ -95,7 +95,7 @@ class MainWindow(Gtk.ApplicationWindow):
             treeiter = self.store.append(
                 [
                     result["eng"],
-                    result["cze"],
+                    "<b>test</b>\nhmm",
                     "test",
                     "test",
                 ]

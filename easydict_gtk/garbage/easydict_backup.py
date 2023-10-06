@@ -4,7 +4,7 @@ gi.require_version("Gtk", "3.0")
 gi.require_version("WebKit2", "4.0")
 gi.require_version("XApp", "1.0")
 from gi.repository import Gtk, WebKit2, Gdk, XApp
-from html_generator import CreateHtml
+from easydict_gtk.utils import CreateHtml
 from tray_menu import TrayMenu
 
 from tinydb import TinyDB, Query

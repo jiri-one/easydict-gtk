@@ -3,7 +3,7 @@ import gi
 gi.require_version("Gtk", "3.0")
 gi.require_version("WebKit2", "4.0")
 from gi.repository import Gtk, WebKit2, Gdk
-from html_generator import CreateHtml
+from easydict_gtk.utils import CreateHtml
 
 
 from pystray import Icon as icon, Menu as menu, MenuItem as item
