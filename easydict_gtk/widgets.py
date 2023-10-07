@@ -10,7 +10,7 @@ import gi
 gi.require_version("Gtk", "4.0")
 from gi.repository import Gtk, Gio, GLib, Gdk
 # internal imports
-from easydict_gtk.utils import db_search
+from utils import db_search
 
 class ListViewBase(Gtk.ListView):
     """ ListView base class, it setup the basic factory, selection model & data model
@@ -140,16 +140,19 @@ class SearchBar(Gtk.SearchBar):
     def __init__(self, win=None):
         super(SearchBar, self).__init__()
         box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
-        box.set_spacing(10)
+        box.add_css_class("ui/search_box.css")
         # Add SearchEntry
         self.entry = Gtk.SearchEntry()
         self.entry.set_hexpand(True)
         box.append(self.entry)
-        # Add Search Options button (Menu content need to be added)
-        btn = Gtk.MenuButton()
-        btn.set_icon_name('preferences-other-symbolic')
-        self.search_options = btn
-        box.append(btn)
+        # add Search button
+        self.button = Gtk.Button(label="Search")
+        # Add DropDown menu
+        self.dropdown = Gtk.DropDown.new_from_strings(["ENG", "CZE"])
+        self.button.connect("clicked", self.on_search)
+        box.append(self.button)
+        box.append(self.dropdown)
+
         self.set_child(box)
         # connect search entry to seach bar
         self.connect_entry(self.entry)
@@ -157,13 +160,31 @@ class SearchBar(Gtk.SearchBar):
             # set key capture from main window, it will show searchbar, when you start typing
             self.set_key_capture_widget(win)
         # show close button in search bar
-        self.set_show_close_button(True)
-        # Set search mode to off by default
-        self.set_search_mode(False)
+        self.set_show_close_button(False)
+        # Turn ON search mode
+        self.set_search_mode(True)
 
     def set_callback(self, callback):
         """ Connect the search entry activate to an callback handler"""
         self.entry.connect('activate', callback)
+    
+    def on_search(self, button):
+        print("zmacnuto tlacitko")
+        return None
+        lng = self.dropdown.get_selected_item().props.string
+        # print(db_search(lng.lower(), self.entry.props.text, False))
+        self.store.clear()
+        for result in db_search(
+            lng.lower(), self.entry.props.text, self.search_fulltext
+        ):
+            treeiter = self.store.append(
+                [
+                    result["eng"],
+                    "<b>test</b>\nhmm",
+                    "test",
+                    "test",
+                ]
+            )
 
 
 class MenuButton(Gtk.MenuButton):

@@ -7,7 +7,6 @@ from tinydb.middlewares import CachingMiddleware
 
 # import to set current working directory
 from pathlib import Path
-import easydict_gtk
 
 
 # set current working directory
