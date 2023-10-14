@@ -3,7 +3,7 @@ from tinydb import TinyDB, Query, where
 from tinydb.middlewares import CachingMiddleware
 
 # import my ORJSON extension for TinyDB
-#from easydict_gtk.orjson_storage import ORJSONStorage
+# from easydict_gtk.orjson_storage import ORJSONStorage
 
 # import to set current working directory
 from pathlib import Path

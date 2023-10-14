@@ -9,11 +9,13 @@ import gi
 
 gi.require_version("Gtk", "4.0")
 from gi.repository import Gtk, Gio, GLib, Gdk
+
 # internal imports
 from utils import db_search
 
+
 class ListViewBase(Gtk.ListView):
-    """ ListView base class, it setup the basic factory, selection model & data model
+    """ListView base class, it setup the basic factory, selection model & data model
     handlers must be overloaded & implemented in a sub class
     """
 
@@ -23,34 +25,34 @@ class ListViewBase(Gtk.ListView):
         self.factory = Gtk.SignalListItemFactory()
         # connect to Gtk.SignalListItemFactory signals
         # check https://docs.gtk.org/gtk4/class.SignalListItemFactory.html for details
-        self.factory.connect('setup', self.on_factory_setup)
-        self.factory.connect('bind', self.on_factory_bind)
-        self.factory.connect('unbind', self.on_factory_unbind)
-        self.factory.connect('teardown', self.on_factory_teardown)
+        self.factory.connect("setup", self.on_factory_setup)
+        self.factory.connect("bind", self.on_factory_bind)
+        self.factory.connect("unbind", self.on_factory_unbind)
+        self.factory.connect("teardown", self.on_factory_teardown)
         # Create data model, use our own class as elements
         self.set_factory(self.factory)
         self.store = self.setup_store(model_cls)
         # create a selection model containing our data model
         self.model = self.setup_model(self.store)
-        self.model.connect('selection-changed', self.on_selection_changed)
+        self.model.connect("selection-changed", self.on_selection_changed)
         # set the selection model to the view
         self.set_model(self.model)
 
     def setup_model(self, store: Gio.ListModel) -> Gtk.SelectionModel:
-        """  Setup the selection model to use in Gtk.ListView
+        """Setup the selection model to use in Gtk.ListView
         Can be overloaded in subclass to use another Gtk.SelectModel model
         """
         return Gtk.SingleSelection.new(store)
 
     @abstractmethod
     def setup_store(self, model_cls) -> Gio.ListModel:
-        """ Setup the data model
+        """Setup the data model
         must be overloaded in subclass to use another Gio.ListModel
         """
         raise NotImplemented
 
     def add(self, elem):
-        """ add element to the data model """
+        """add element to the data model"""
         self.store.append(elem)
 
     # Gtk.SignalListItemFactory signal callbacks
@@ -58,27 +60,27 @@ class ListViewBase(Gtk.ListView):
     # a subclass.
 
     def on_factory_setup(self, widget, item: Gtk.ListItem):
-        """ GtkSignalListItemFactory::setup signal callback
+        """GtkSignalListItemFactory::setup signal callback
 
-        Setup the widgets to go into the ListView """
+        Setup the widgets to go into the ListView"""
 
         self.factory_setup(widget, item)
 
     def on_factory_bind(self, widget: Gtk.ListView, item: Gtk.ListItem):
-        """ GtkSignalListItemFactory::bind signal callback
+        """GtkSignalListItemFactory::bind signal callback
 
         apply data from model to widgets set in setup"""
         self.factory_bind(widget, item)
 
     def on_factory_unbind(self, widget, item: Gtk.ListItem):
-        """ GtkSignalListItemFactory::unbind signal callback
+        """GtkSignalListItemFactory::unbind signal callback
 
         Undo the the binding done in ::bind if needed
         """
         self.factory_unbind(widget, item)
 
     def on_factory_teardown(self, widget, item: Gtk.ListItem):
-        """ GtkSignalListItemFactory::setup signal callback
+        """GtkSignalListItemFactory::setup signal callback
 
         Undo the creation done in ::setup if needed
         """
@@ -97,12 +99,12 @@ class ListViewBase(Gtk.ListView):
 
     @abstractmethod
     def factory_setup(self, widget: Gtk.ListView, item: Gtk.ListItem):
-        """ Setup the widgets to go into the ListView (Overload in subclass) """
+        """Setup the widgets to go into the ListView (Overload in subclass)"""
         pass
 
     @abstractmethod
     def factory_bind(self, widget: Gtk.ListView, item: Gtk.ListItem):
-        """ apply data from model to widgets set in setup (Overload in subclass)"""
+        """apply data from model to widgets set in setup (Overload in subclass)"""
         pass
 
     @abstractmethod
@@ -115,30 +117,31 @@ class ListViewBase(Gtk.ListView):
 
     @abstractmethod
     def selection_changed(self, widget, ndx):
-        """ trigged when selecting in listview is changed
+        """trigged when selecting in listview is changed
         ndx: is the index in the data store model that is selected
         """
         pass
 
 
 class ListViewStrings(ListViewBase):
-    """ Add ListView with only strings """
+    """Add ListView with only strings"""
 
     def __init__(self):
         super(ListViewStrings, self).__init__(Gtk.StringObject)
 
     def setup_store(self, model_cls) -> Gio.ListModel:
-        """ Setup the data model
+        """Setup the data model
         Can be overloaded in subclass to use another Gio.ListModel
         """
         return Gtk.StringList()
 
 
 class SearchBar(Gtk.SearchBar):
-    """ Wrapper for Gtk.Searchbar Gtk.SearchEntry"""
+    """Wrapper for Gtk.Searchbar Gtk.SearchEntry"""
 
-    def __init__(self, win=None):
+    def __init__(self, win: Gtk.ApplicationWindow = None):
         super(SearchBar, self).__init__()
+        self.win = win
         box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
         box.add_css_class("ui/search_box.css")
         # Add SearchEntry
@@ -165,26 +168,27 @@ class SearchBar(Gtk.SearchBar):
         self.set_search_mode(True)
 
     def set_callback(self, callback):
-        """ Connect the search entry activate to an callback handler"""
-        self.entry.connect('activate', callback)
-    
+        """Connect the search entry activate to an callback handler"""
+        self.entry.connect("activate", callback)
+
     def on_search(self, button):
-        print("zmacnuto tlacitko")
-        return None
         lng = self.dropdown.get_selected_item().props.string
         # print(db_search(lng.lower(), self.entry.props.text, False))
-        self.store.clear()
-        for result in db_search(
-            lng.lower(), self.entry.props.text, self.search_fulltext
-        ):
-            treeiter = self.store.append(
-                [
-                    result["eng"],
-                    "<b>test</b>\nhmm",
-                    "test",
-                    "test",
-                ]
+        # remove all search results
+        self.win.listview_str.store.splice(0, len(self.win.listview_str.store))
+        for item in db_search(lng.lower(), self.entry.props.text, True):
+            if item.get("notes", None):
+                notes = " | " + item["notes"]
+            else:
+                notes = ""
+            if item.get("special", None):
+                special = " | " + item["special"]
+            else:
+                special = ""
+            treeiter = self.win.listview_str.add(
+                f"""<b>{item["eng"]}</b>\n {item["cze"]}{notes}{special}"""
             )
+        return None
 
 
 class MenuButton(Gtk.MenuButton):
@@ -193,7 +197,7 @@ class MenuButton(Gtk.MenuButton):
     in a Gtk.Builder xml string
     """
 
-    def __init__(self, xml, name, icon_name='open-menu-symbolic'):
+    def __init__(self, xml, name, icon_name="open-menu-symbolic"):
         super(MenuButton, self).__init__()
         builder = Gtk.Builder()
         builder.add_from_string(xml)
@@ -203,7 +207,8 @@ class MenuButton(Gtk.MenuButton):
 
 
 class MyListViewStrings(ListViewStrings):
-    """ Custom ListView """
+    """Custom ListView"""
+
     def __init__(self, win: Gtk.ApplicationWindow):
         # Init ListView with store model class.
         super(MyListViewStrings, self).__init__()
@@ -215,7 +220,7 @@ class MyListViewStrings(ListViewStrings):
             self.add(f"""<b>{row["eng"]}</b>\n {row["cze"]}""")
 
     def factory_setup(self, widget: Gtk.ListView, item: Gtk.ListItem):
-        """ Gtk.SignalListItemFactory::setup signal callback (overloaded from parent class)
+        """Gtk.SignalListItemFactory::setup signal callback (overloaded from parent class)
 
         Handles the creation widgets to put in the ListView
         """
@@ -226,7 +231,7 @@ class MyListViewStrings(ListViewStrings):
         item.set_child(label)
 
     def factory_bind(self, widget: Gtk.ListView, item: Gtk.ListItem):
-        """ Gtk.SignalListItemFactory::bind signal callback (overloaded from parent class)
+        """Gtk.SignalListItemFactory::bind signal callback (overloaded from parent class)
 
         Handles adding data for the model to the widgets created in setup
         """
@@ -240,8 +245,9 @@ class MyListViewStrings(ListViewStrings):
         item.set_child(label)
 
     def selection_changed(self, widget, ndx: int):
-        """ trigged when selecting in listview is changed"""
+        """trigged when selecting in listview is changed"""
         print("ZDEEEEEEEEEEE", self.win, widget, ndx)
         markup = self.win._get_text_markup(
-            f'Row {ndx} was selected ( {self.store[ndx].get_string()} )')
+            f"Row {ndx} was selected ( {self.store[ndx].get_string()} )"
+        )
         self.win.page4_label.set_markup(markup)
