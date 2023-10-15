@@ -142,7 +142,7 @@ class SearchBar(Gtk.SearchBar):
 
     def __init__(self, win: Gtk.ApplicationWindow = None):
         super(SearchBar, self).__init__()
-
+        self.task = None
         self.search_type = "first_chars"
         self.win = win
         search_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
@@ -175,6 +175,7 @@ class SearchBar(Gtk.SearchBar):
         self.toggle_first.props.hexpand = True
         self.toggle_whole_word.props.hexpand = True
         self.toggle_fulltext.props.hexpand = True
+        self.toggle_first.connect("clicked", self.on_toggle)
         self.toggle_whole_word.connect("clicked", self.on_toggle)
         self.toggle_fulltext.connect("clicked", self.on_toggle)
 
@@ -199,6 +200,32 @@ class SearchBar(Gtk.SearchBar):
         """Connect the search entry activate to an callback handler"""
         self.entry.connect("activate", callback)
 
+    async def search_task(self, word, lng, search_type):
+        async with asyncio.TaskGroup() as tg:
+            self.task = tg.create_task(
+                search_async(word, lng, search_type)
+            )
+            # count = len(self.results.items)
+        return await self.task # return results of the task
+        
+
+    async def search_in_db(self, word, lng, search_type):
+        if self.task:
+            self.task.cancel()
+            try:
+                print("jsem tady")
+                await self.task
+            except asyncio.CancelledError:
+                print(
+                    f"canceled: {self.task.cancelled()} or done: {self.task.done()}"
+                )
+
+            if self.task.cancelled() or self.task.done():
+                return await self.search_task(word, lng, search_type)
+        else:
+            return await self.search_task(word, lng, search_type)
+
+
     def on_search(self, button):
         # remove all search results from current store
         store = self.win.listview_str.store
@@ -211,7 +238,8 @@ class SearchBar(Gtk.SearchBar):
         word = self.entry.props.text
         # get current search type
         search_type = self.search_type
-        result_list = asyncio.run(search_async(word, lng1, search_type))
+        print(search_type, self.task)
+        result_list = asyncio.run(self.search_in_db(word, lng1, search_type))
         if result_list:
             for item in result_list.items:
                 if item.notes:
@@ -296,8 +324,8 @@ class MyListViewStrings(ListViewStrings):
 
     def selection_changed(self, widget, ndx: int):
         """trigged when selecting in listview is changed"""
-        print("ZDEEEEEEEEEEE", self.win, widget, ndx)
-        markup = self.win._get_text_markup(
-            f"Row {ndx} was selected ( {self.store[ndx].get_string()} )"
-        )
-        self.win.page4_label.set_markup(markup)
+        # print("ZDEEEEEEEEEEE", self.win, widget, ndx)
+        # markup = self.win._get_text_markup(
+        #     f"Row {ndx} was selected ( {self.store[ndx].get_string()} )"
+        # )
+        # self.win.page4_label.set_markup(markup)
