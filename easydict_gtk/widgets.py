@@ -2,6 +2,7 @@
 Widgets for EasyDict-GTK
 """
 import os.path
+import asyncio
 
 from abc import abstractmethod
 
@@ -11,7 +12,7 @@ gi.require_version("Gtk", "4.0")
 from gi.repository import Gtk, Gio, GLib, Gdk
 
 # internal imports
-from utils import db_search
+from backends.sqlite_backend import search_async
 
 
 class ListViewBase(Gtk.ListView):
@@ -199,22 +200,33 @@ class SearchBar(Gtk.SearchBar):
         self.entry.connect("activate", callback)
 
     def on_search(self, button):
-        lng = self.dropdown.get_selected_item().props.string
+        # remove all search results from current store
+        store = self.win.listview_str.store
+        store.splice(0, len(store))
+        # get current language settings
+        lng1 = self.dropdown.get_selected_item().props.string.lower()
+        lng2 = [lang for lang in ["cze", "eng"] if lang != lng1][0]
         # print(db_search(lng.lower(), self.entry.props.text, False))
-        # remove all search results
-        self.win.listview_str.store.splice(0, len(self.win.listview_str.store))
-        for item in db_search(lng.lower(), self.entry.props.text, True):
-            if item.get("notes", None):
-                notes = " | " + item["notes"]
-            else:
-                notes = ""
-            if item.get("special", None):
-                special = " | " + item["special"]
-            else:
-                special = ""
-            treeiter = self.win.listview_str.add(
-                f"""<b>{item["eng"]}</b>\n {item["cze"]}{notes}{special}"""
-            )
+        # get text from search entry
+        word = self.entry.props.text
+        # get current search type
+        search_type = self.search_type
+        result_list = asyncio.run(search_async(word, lng1, search_type))
+        if result_list:
+            for item in result_list.items:
+                if item.notes:
+                    notes = " | " + item.notes
+                else:
+                    notes = ""
+                if item.special:
+                    special = " | " + item.special
+                else:
+                    special = ""
+
+                treeiter = self.win.listview_str.add(
+                    f"""<b>{getattr(item, lng1)}</b>\n {getattr(item, lng2)}{notes}{special}"""
+                )
+
         return None
     
     def on_toggle(self, button):
@@ -253,9 +265,9 @@ class MyListViewStrings(ListViewStrings):
         self.win = win
         self.set_vexpand(True)
         # put some data into the model
-        results = db_search("eng", "live", fulltext=False)
-        for row in results:
-            self.add(f"""<b>{row["eng"]}</b>\n {row["cze"]}""")
+        # results = db_search("eng", "live", fulltext=False)
+        # for row in results:
+        #     self.add(f"""<b>{row["eng"]}</b>\n {row["cze"]}""")
 
     def factory_setup(self, widget: Gtk.ListView, item: Gtk.ListItem):
         """Gtk.SignalListItemFactory::setup signal callback (overloaded from parent class)
