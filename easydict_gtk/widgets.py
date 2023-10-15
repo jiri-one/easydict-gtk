@@ -141,22 +141,49 @@ class SearchBar(Gtk.SearchBar):
 
     def __init__(self, win: Gtk.ApplicationWindow = None):
         super(SearchBar, self).__init__()
+
+        self.search_type = "first_chars"
         self.win = win
-        box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
-        box.add_css_class("ui/search_box.css")
+        search_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
+        search_box.add_css_class("ui/search_box.css")
+        first_hbox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
+        second_hbox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
+        
         # Add SearchEntry
         self.entry = Gtk.SearchEntry()
         self.entry.set_hexpand(True)
-        box.append(self.entry)
+        first_hbox.append(self.entry)
         # add Search button
         self.button = Gtk.Button(label="Search")
         # Add DropDown menu
         self.dropdown = Gtk.DropDown.new_from_strings(["ENG", "CZE"])
         self.button.connect("clicked", self.on_search)
-        box.append(self.button)
-        box.append(self.dropdown)
+        first_hbox.append(self.button)
+        first_hbox.append(self.dropdown)
 
-        self.set_child(box)
+        # second line with toggle buttons
+        self.toggle_first = Gtk.ToggleButton(label="First chars")
+        self.toggle_first.set_active(True)
+        self.toggle_whole_word = Gtk.ToggleButton(label="Whole word")
+        self.toggle_whole_word.set_active(False)
+        self.toggle_whole_word.set_group(self.toggle_first)
+        self.toggle_fulltext = Gtk.ToggleButton(label="Fulltext")
+        self.toggle_fulltext.set_active(False)
+        self.toggle_fulltext.set_group(self.toggle_first)
+
+        self.toggle_first.props.hexpand = True
+        self.toggle_whole_word.props.hexpand = True
+        self.toggle_fulltext.props.hexpand = True
+        self.toggle_whole_word.connect("clicked", self.on_toggle)
+        self.toggle_fulltext.connect("clicked", self.on_toggle)
+
+        second_hbox.append(self.toggle_first)
+        second_hbox.append(self.toggle_whole_word)
+        second_hbox.append(self.toggle_fulltext)
+
+        search_box.append(first_hbox)
+        search_box.append(second_hbox)
+        self.set_child(search_box)
         # connect search entry to seach bar
         self.connect_entry(self.entry)
         if win:
@@ -189,6 +216,17 @@ class SearchBar(Gtk.SearchBar):
                 f"""<b>{item["eng"]}</b>\n {item["cze"]}{notes}{special}"""
             )
         return None
+    
+    def on_toggle(self, button):
+        if button.props.label == "Fulltext":
+            self.search_type = "fulltext"
+        elif button.props.label == "Whole word":
+            self.search_type = "whole_word"
+        elif button.props.label == "First chars":
+            self.search_type = "first_chars"
+        else:
+            raise ValueError("Use only known toggles: 'Fulltext' or 'Whole word' or 'First chars'")
+
 
 
 class MenuButton(Gtk.MenuButton):

@@ -16,7 +16,7 @@ cfg_dir = Path.home() / ".config" / "easydict"  # set user config directory
 cfg_dir.mkdir(exist_ok=True)  # create the config directory if not exists
 
 # main db with eng-cze dict (name just db, but table is eng_cze and EasyDict works with that table)
-db = TinyDB(cwd / "data" / "eng-cze.json", encoding="UTF-8")
+db = TinyDB(cwd / "dict_data" / "tinydb_eng-cze.json", encoding="UTF-8")
 eng_cze = db.table("eng_cze")
 
 # second db to store and restore program settings (name prefdb, with just _default table)
