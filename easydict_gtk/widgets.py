@@ -149,7 +149,7 @@ class SearchBar(Gtk.SearchBar):
         search_box.add_css_class("ui/search_box.css")
         first_hbox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
         second_hbox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
-        
+
         # Add SearchEntry
         self.entry = Gtk.SearchEntry()
         self.entry.set_hexpand(True)
@@ -202,29 +202,21 @@ class SearchBar(Gtk.SearchBar):
 
     async def search_task(self, word, lng, search_type):
         async with asyncio.TaskGroup() as tg:
-            self.task = tg.create_task(
-                search_async(word, lng, search_type)
-            )
-            # count = len(self.results.items)
-        return await self.task # return results of the task
-        
+            self.task = tg.create_task(search_async(word, lng, search_type))
+        return await self.task  # return results of the task
 
     async def search_in_db(self, word, lng, search_type):
         if self.task:
             self.task.cancel()
             try:
-                print("jsem tady")
                 await self.task
             except asyncio.CancelledError:
-                print(
-                    f"canceled: {self.task.cancelled()} or done: {self.task.done()}"
-                )
+                print(f"canceled: {self.task.cancelled()} or done: {self.task.done()}")
 
             if self.task.cancelled() or self.task.done():
                 return await self.search_task(word, lng, search_type)
         else:
             return await self.search_task(word, lng, search_type)
-
 
     def on_search(self, button):
         # remove all search results from current store
@@ -256,7 +248,7 @@ class SearchBar(Gtk.SearchBar):
                 )
 
         return None
-    
+
     def on_toggle(self, button):
         if button.props.label == "Fulltext":
             self.search_type = "fulltext"
@@ -265,8 +257,9 @@ class SearchBar(Gtk.SearchBar):
         elif button.props.label == "First chars":
             self.search_type = "first_chars"
         else:
-            raise ValueError("Use only known toggles: 'Fulltext' or 'Whole word' or 'First chars'")
-
+            raise ValueError(
+                "Use only known toggles: 'Fulltext' or 'Whole word' or 'First chars'"
+            )
 
 
 class MenuButton(Gtk.MenuButton):
