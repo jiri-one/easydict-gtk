@@ -5,6 +5,9 @@ import sys
 import os
 from typing import List
 from pathlib import Path
+from contextlib import contextmanager
+import asyncio
+from threading import Thread
 
 import gi
 
@@ -16,7 +19,7 @@ from widgets import MyListViewStrings, SearchBar
 
 
 class MyWindow(Adw.ApplicationWindow):
-    def __init__(self, title, width, height, **kwargs):
+    def __init__(self, title, width, height, loop, **kwargs):
         super(MyWindow, self).__init__(**kwargs)
         self.load_css("ui/search_box.css")
         self.set_default_size(width, height)
@@ -29,7 +32,7 @@ class MyWindow(Adw.ApplicationWindow):
         option_btn.set_icon_name("preferences-other-symbolic")
         self.search_options = option_btn
         header.pack_start(option_btn)
-        search = SearchBar(self)
+        search = SearchBar(loop, self)
         stack = Adw.ViewStack()
         box.append(header)
         box.append(search)
@@ -73,17 +76,36 @@ class MyWindow(Adw.ApplicationWindow):
 class Application(Adw.Application):
     """Main Aplication class"""
 
-    def __init__(self):
+    def __init__(self, loop):
         super().__init__(
             application_id="one.jiri.easydict-gtk",
             flags=Gio.ApplicationFlags.FLAGS_NONE,
         )
+        self._loop = loop
 
     def do_activate(self):
         win = self.props.active_window
         if not win:
-            win = MyWindow("EasyDict-GTK", 600, 1200, application=self)
+            win = MyWindow("EasyDict-GTK", 600, 1200, loop=self._loop, application=self)
         win.present()
+
+
+def run_event_loop(loop: asyncio.AbstractEventLoop):
+    """Run asyncio event loop in daemon thread"""
+    loop.run_forever()
+
+
+@contextmanager
+def get_event_loop():
+    """Use a context manager to manage the thread's lifecycle"""
+    loop = asyncio.get_event_loop()
+    thread = Thread(target=run_event_loop, args=(loop,))
+    thread.daemon = True
+    thread.start()
+    try:
+        yield loop
+    finally:
+        thread.join()
 
 
 def main(args=sys.argv[1:]):
@@ -97,8 +119,10 @@ def main(args=sys.argv[1:]):
         reloader = hupper.start_reloader("easydict_gtk.easydict_new.main")
         # monitor an extra file
         # reloader.watch_files(['foo.ini'])
-        app = Application()
-        return app.run()
+
+        with get_event_loop() as loop:
+            app = Application(loop)
+            app.run()
 
 
 if __name__ == "__main__":

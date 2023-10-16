@@ -3,6 +3,9 @@ Widgets for EasyDict-GTK
 """
 import os.path
 import asyncio
+import threading
+from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor
+from functools import partial
 
 from abc import abstractmethod
 
@@ -140,8 +143,9 @@ class ListViewStrings(ListViewBase):
 class SearchBar(Gtk.SearchBar):
     """Wrapper for Gtk.Searchbar Gtk.SearchEntry"""
 
-    def __init__(self, win: Gtk.ApplicationWindow = None):
+    def __init__(self, loop, win: Gtk.ApplicationWindow = None):
         super(SearchBar, self).__init__()
+        self._loop = loop
         self.task = None
         self.search_type = "first_chars"
         self.win = win
@@ -201,9 +205,34 @@ class SearchBar(Gtk.SearchBar):
         self.entry.connect("activate", callback)
 
     async def search_task(self, word, lng, search_type):
+        # default language for results
+        lng1 = lng
+        # and second language for translation results
+        lng2 = [lang for lang in ["cze", "eng"] if lang != lng1][0]
+
+        result_strings = list()
         async with asyncio.TaskGroup() as tg:
             self.task = tg.create_task(search_async(word, lng, search_type))
-        return await self.task  # return results of the task
+            results = await self.task
+            if results:
+                for item in results.items:
+                    if item.notes:
+                        notes = " | " + item.notes
+                    else:
+                        notes = ""
+                    if item.special:
+                        special = " | " + item.special
+                    else:
+                        special = ""
+                    whole_string = f"""<b>{getattr(item, lng1)}</b>\n {getattr(item, lng2)}{notes}{special}"""
+                    result_strings.append(whole_string)
+        # and with results we need to update the ListViewString store - it is StringList
+        store = self.win.listview_str.store
+        # remove all search results from current store and add all results together
+        GLib.idle_add(store.splice, 0, len(store), result_strings)
+        # https://lazka.github.io/pgi-docs/Gtk-4.0/classes/StringList.html#Gtk.StringList.splice
+        # https://lazka.github.io/pgi-docs/#GLib-2.0/functions.html#GLib.idle_add
+        # https://pygobject.readthedocs.io/en/latest/guide/threading.html
 
     async def search_in_db(self, word, lng, search_type):
         if self.task:
@@ -214,39 +243,20 @@ class SearchBar(Gtk.SearchBar):
                 print(f"canceled: {self.task.cancelled()} or done: {self.task.done()}")
 
             if self.task.cancelled() or self.task.done():
-                return await self.search_task(word, lng, search_type)
+                await self.search_task(word, lng, search_type)
         else:
-            return await self.search_task(word, lng, search_type)
+            await self.search_task(word, lng, search_type)
 
     def on_search(self, button):
-        # remove all search results from current store
-        store = self.win.listview_str.store
-        store.splice(0, len(store))
         # get current language settings
-        lng1 = self.dropdown.get_selected_item().props.string.lower()
-        lng2 = [lang for lang in ["cze", "eng"] if lang != lng1][0]
-        # print(db_search(lng.lower(), self.entry.props.text, False))
+        lng = self.dropdown.get_selected_item().props.string.lower()
         # get text from search entry
         word = self.entry.props.text
         # get current search type
         search_type = self.search_type
-        print(search_type, self.task)
-        result_list = asyncio.run(self.search_in_db(word, lng1, search_type))
-        if result_list:
-            for item in result_list.items:
-                if item.notes:
-                    notes = " | " + item.notes
-                else:
-                    notes = ""
-                if item.special:
-                    special = " | " + item.special
-                else:
-                    special = ""
-
-                treeiter = self.win.listview_str.add(
-                    f"""<b>{getattr(item, lng1)}</b>\n {getattr(item, lng2)}{notes}{special}"""
-                )
-
+        asyncio.run_coroutine_threadsafe(
+            self.search_in_db(word, lng, search_type), self._loop
+        )
         return None
 
     def on_toggle(self, button):
