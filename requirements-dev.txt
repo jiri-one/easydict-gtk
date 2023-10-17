@@ -1,0 +1,6 @@
+aiosqlite==0.19.0
+black==23.9.1
+hupper==1.12
+PyGObject==3.46.0
+PyGObject-stubs==2.9.0
+tinydb==4.8.0
