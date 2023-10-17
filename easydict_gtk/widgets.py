@@ -157,6 +157,7 @@ class SearchBar(Gtk.SearchBar):
         # Add SearchEntry
         self.entry = Gtk.SearchEntry()
         self.entry.set_hexpand(True)
+        self.entry.connect("changed", self.on_search)
         first_hbox.append(self.entry)
         # add Search button
         self.button = Gtk.Button(label="Search")
@@ -200,6 +201,9 @@ class SearchBar(Gtk.SearchBar):
         # Turn ON search mode
         self.set_search_mode(True)
 
+    def on_entry_changed(self, hm):
+        print("změna", hm)
+
     def set_callback(self, callback):
         """Connect the search entry activate to an callback handler"""
         self.entry.connect("activate", callback)
@@ -235,6 +239,7 @@ class SearchBar(Gtk.SearchBar):
         # https://pygobject.readthedocs.io/en/latest/guide/threading.html
 
     async def search_in_db(self, word, lng, search_type):
+        create_new_task = False
         if self.task:
             self.task.cancel()
             try:
@@ -243,11 +248,20 @@ class SearchBar(Gtk.SearchBar):
                 print(f"canceled: {self.task.cancelled()} or done: {self.task.done()}")
 
             if self.task.cancelled() or self.task.done():
-                await self.search_task(word, lng, search_type)
+                create_new_task = True
         else:
+            create_new_task = True
+        # if we initiate new search task and search word is not empty
+        if create_new_task and word != "":
             await self.search_task(word, lng, search_type)
+        # elif the word is empty, so we will empty tthe listview
+        elif create_new_task and word == "":
+            # need to update the ListViewString store - it is StringList
+            store = self.win.listview_str.store
+            # remove all search results from current store
+            GLib.idle_add(store.splice, 0, len(store))
 
-    def on_search(self, button):
+    def on_search(self, caller_obj):
         # get current language settings
         lng = self.dropdown.get_selected_item().props.string.lower()
         # get text from search entry
@@ -260,6 +274,7 @@ class SearchBar(Gtk.SearchBar):
         return None
 
     def on_toggle(self, button):
+        # firsly we will get info about toggle button and set correct search type
         if button.props.label == "Fulltext":
             self.search_type = "fulltext"
         elif button.props.label == "Whole word":
@@ -270,6 +285,8 @@ class SearchBar(Gtk.SearchBar):
             raise ValueError(
                 "Use only known toggles: 'Fulltext' or 'Whole word' or 'First chars'"
             )
+        # and then we run search in db to sync toggle button state with results
+        self.on_search(button)
 
 
 class MenuButton(Gtk.MenuButton):
