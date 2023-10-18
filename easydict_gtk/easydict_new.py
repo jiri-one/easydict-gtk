@@ -8,6 +8,10 @@ from pathlib import Path
 from contextlib import contextmanager
 import asyncio
 from threading import Thread
+from concurrent.futures import ThreadPoolExecutor
+
+import concurrent
+
 
 import gi
 
@@ -90,9 +94,12 @@ class Application(Adw.Application):
         win.present()
 
 
-def run_event_loop(loop: asyncio.AbstractEventLoop):
+def run_event_loop(q):
     """Run asyncio event loop in daemon thread"""
+    loop = asyncio.new_event_loop()
+    q.put(loop)
     loop.run_forever()
+
 
 
 @contextmanager
@@ -120,9 +127,18 @@ def main(args=sys.argv[1:]):
         # monitor an extra file
         # reloader.watch_files(['foo.ini'])
 
-        with get_event_loop() as loop:
+        import queue
+
+        q = queue.Queue()
+        with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
+            executor.submit(run_event_loop, q)
+            loop = q.get()
+            print("a zde?")
             app = Application(loop)
             app.run()
+        # with get_event_loop() as loop:
+        #     app = Application(loop)
+        #     app.run()
 
 
 if __name__ == "__main__":
