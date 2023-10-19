@@ -8,11 +8,13 @@ from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor
 from functools import partial
 
 from abc import abstractmethod
+from textwrap import dedent
+from settings import images
 
 import gi
 
 gi.require_version("Gtk", "4.0")
-from gi.repository import Gtk, Gio, GLib, Gdk
+from gi.repository import Gtk, Gio, GLib, Gdk, GdkPixbuf
 
 # internal imports
 from backends.sqlite_backend import search_async
@@ -164,7 +166,7 @@ class SearchBar(Gtk.SearchBar):
         # Add DropDown menu
         self.dropdown = Gtk.DropDown.new_from_strings(["ENG", "CZE"])
         self.button.connect("clicked", self.on_search)
-        first_hbox.append(self.button)
+        # first_hbox.append(self.button)
         first_hbox.append(self.dropdown)
 
         # second line with toggle buttons
@@ -254,18 +256,32 @@ class SearchBar(Gtk.SearchBar):
         # if we initiate new search task and search word is not empty
         if create_new_task and word != "":
             await self.search_task(word, lng, search_type)
-        # elif the word is empty, so we will empty tthe listview
-        elif create_new_task and word == "":
-            # need to update the ListViewString store - it is StringList
-            store = self.win.listview_str.store
-            # remove all search results from current store
-            GLib.idle_add(store.splice, 0, len(store))
+
+        # NOTE: this part down is now not unnecessary, because we delete content of store in on_search method
+
+        # elif the word is empty, so we will empty the listview
+        # elif create_new_task and word == "":
+        #     # need to update the ListViewString store - it is StringList
+        #     store = self.win.listview_str.store
+        #     # remove all search results from current store
+        #     GLib.idle_add(store.splice, 0, len(store))
 
     def on_search(self, caller_obj):
-        # get current language settings
-        lng = self.dropdown.get_selected_item().props.string.lower()
         # get text from search entry
         word = self.entry.props.text
+        # if we have word (searched text), then we need show the stack with results
+        if word:
+            self.win.main_box.remove(self.win.front_page)
+            self.win.main_box.append(self.win.stack)
+        else:  # if entry is empty, we will shof front page
+            self.win.main_box.remove(self.win.stack)
+            self.win.main_box.append(self.win.front_page)
+            store = self.win.listview_str.store
+            # and remove all search results from current store
+            store.splice(0, len(store))
+            return None
+        # get current language settings
+        lng = self.dropdown.get_selected_item().props.string.lower()
         # get current search type
         search_type = self.search_type
         asyncio.run_coroutine_threadsafe(
@@ -287,6 +303,48 @@ class SearchBar(Gtk.SearchBar):
             )
         # and then we run search in db to sync toggle button state with results
         self.on_search(button)
+
+
+class FrontPage(Gtk.Box):
+    """Fron page of EasyDict-GTK in one Box"""
+
+    def __init__(self):
+        super().__init__()
+        self.set_orientation(Gtk.Orientation.VERTICAL)
+        welcome = self.welcome_label()
+        self.append(welcome)
+        logo = self.logo_image()
+        self.append(logo)
+        slogan = self.slogan_label()
+        self.append(slogan)
+
+    def welcome_label(self):
+        label = Gtk.Label.new()
+        # markup = GLib.markup_escape_text()
+        label.set_justify(Gtk.Justification.CENTER)
+        label.set_wrap(True)
+        label.set_markup(
+            '\n<b><span size="x-large">Welcome to EasyDict</span></b>\n\nJust start typing to show results!\n'
+        )
+        return label
+
+    def logo_image(self):
+        logo_pixbuf = GdkPixbuf.Pixbuf.new_from_file(images["ed_icon.png"])
+        print(images.get("ed_icon.png", None))
+        image = Gtk.Image.new_from_pixbuf(logo_pixbuf)
+        image.set_size_request(500, 500)
+        image.set_halign(Gtk.Align.CENTER)
+        return image
+
+    def slogan_label(self):
+        label = Gtk.Label.new()
+        # markup = GLib.markup_escape_text()
+        label.set_justify(Gtk.Justification.CENTER)
+        label.set_wrap(True)
+        label.set_markup(
+            "\n<big>The first translator which is completely open with dictionary data too.</big>"
+        )
+        return label
 
 
 class MenuButton(Gtk.MenuButton):
@@ -325,6 +383,7 @@ class MyListViewStrings(ListViewStrings):
         label = Gtk.Label()
         label.set_halign(Gtk.Align.START)
         label.set_hexpand(True)
+        label.set_wrap(True)
         label.set_margin_start(10)
         item.set_child(label)
 
