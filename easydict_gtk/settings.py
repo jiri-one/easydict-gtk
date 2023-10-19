@@ -11,7 +11,10 @@ from pathlib import Path
 
 # set current working directory
 cwd = Path(__file__).parent
-cwd_images = cwd / "images"
+# dictionary with images
+images = dict()
+for img_path in (cwd / "images").iterdir():
+    images[img_path.name] = str(img_path.resolve())
 cfg_dir = Path.home() / ".config" / "easydict"  # set user config directory
 cfg_dir.mkdir(exist_ok=True)  # create the config directory if not exists
 

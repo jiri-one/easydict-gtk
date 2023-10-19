@@ -16,7 +16,7 @@ sys.path.append(str(package))
 
 from easydict_gtk.utils import CreateHtml, db_search
 from easydict_gtk.handlers import Handlers
-from easydict_gtk.settings import cwd, cwd_images, Settings
+from easydict_gtk.settings import cwd, images, Settings
 
 
 class MainWindow(Gtk.ApplicationWindow):

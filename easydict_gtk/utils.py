@@ -2,7 +2,7 @@ import difflib
 import re
 
 # imports from my other files with classes and methods
-from settings import cwd, cwd_images, eng_cze, where
+from settings import cwd, images, eng_cze, where
 
 
 def db_search(language, text, fulltext):

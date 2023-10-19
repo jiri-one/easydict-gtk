@@ -14,7 +14,7 @@ gi.require_version("Gtk", "4.0")
 gi.require_version("Adw", "1")
 
 from gi.repository import Gtk, GLib, GObject, Gio, Adw
-from widgets import MyListViewStrings, SearchBar
+from widgets import MyListViewStrings, SearchBar, FrontPage
 
 
 class MyWindow(Adw.ApplicationWindow):
@@ -32,12 +32,14 @@ class MyWindow(Adw.ApplicationWindow):
         self.search_options = option_btn
         header.pack_start(option_btn)
         search = SearchBar(loop, self)
+        front_page = FrontPage()
         stack = Adw.ViewStack()
         box.append(header)
         box.append(search)
+        box.append(front_page)
         content = self.setup_content()
         stack.add(content)
-        box.append(stack)
+        # box.append(stack)
         self.set_content(box)
 
     def setup_content(self):
@@ -100,6 +102,7 @@ def main(args=sys.argv[1:]):
     """Run the main application"""
     if "--reload" in args:
         import hupper
+
         package = Path(__file__).parent.parent
         sys.path.append(str(package))
         # start_reloader will only return in a monitored subprocess

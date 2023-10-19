@@ -8,11 +8,13 @@ from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor
 from functools import partial
 
 from abc import abstractmethod
+from textwrap import dedent
+from settings import images
 
 import gi
 
 gi.require_version("Gtk", "4.0")
-from gi.repository import Gtk, Gio, GLib, Gdk
+from gi.repository import Gtk, Gio, GLib, Gdk, GdkPixbuf
 
 # internal imports
 from backends.sqlite_backend import search_async
@@ -164,7 +166,7 @@ class SearchBar(Gtk.SearchBar):
         # Add DropDown menu
         self.dropdown = Gtk.DropDown.new_from_strings(["ENG", "CZE"])
         self.button.connect("clicked", self.on_search)
-        first_hbox.append(self.button)
+        # first_hbox.append(self.button)
         first_hbox.append(self.dropdown)
 
         # second line with toggle buttons
@@ -287,6 +289,49 @@ class SearchBar(Gtk.SearchBar):
             )
         # and then we run search in db to sync toggle button state with results
         self.on_search(button)
+
+
+class FrontPage(Gtk.Box):
+    """Fron page of EasyDict-GTK in one Box"""
+
+    def __init__(self):
+        super().__init__()
+        self.set_orientation(Gtk.Orientation.VERTICAL)
+        welcome = self.welcome_label()
+        self.append(welcome)
+        logo = self.logo_image()
+        self.append(logo)
+        slogan = self.slogan_label()
+        self.append(slogan)
+
+    def welcome_label(self):
+        label = Gtk.Label.new()
+        # markup = GLib.markup_escape_text()
+        label.set_justify(Gtk.Justification.CENTER)
+        label.set_wrap(True)
+        label.set_markup(
+            '\n<b><span size="x-large">Welcome to EasyDict</span></b>\n\nJust start typing to show results!\n'
+        )
+        return label
+
+    def logo_image(self):
+        logo_pixbuf = GdkPixbuf.Pixbuf.new_from_file(images["ed_icon.png"])
+        print(images.get("ed_icon.png", None))
+        image = Gtk.Image.new_from_pixbuf(logo_pixbuf)
+        image.set_size_request(500, 500)
+        image.set_halign(Gtk.Align.CENTER)
+
+        return image
+
+    def slogan_label(self):
+        label = Gtk.Label.new()
+        # markup = GLib.markup_escape_text()
+        label.set_justify(Gtk.Justification.CENTER)
+        label.set_wrap(True)
+        label.set_markup(
+            "\n<big>The first translator which is completely open with dictionary data too.</big>"
+        )
+        return label
 
 
 class MenuButton(Gtk.MenuButton):
