@@ -3,11 +3,10 @@ EasyDict-GTK - Python Gtk4 based Application
 """
 import sys
 import os
-from typing import List
 from pathlib import Path
-from contextlib import contextmanager
 import asyncio
-from threading import Thread
+from concurrent.futures import ThreadPoolExecutor
+from queue import Queue
 
 import gi
 
@@ -90,29 +89,17 @@ class Application(Adw.Application):
         win.present()
 
 
-def run_event_loop(loop: asyncio.AbstractEventLoop):
-    """Run asyncio event loop in daemon thread"""
+def run_event_loop(q):
+    """Run asyncio event loop in ThreadPoolExecutor in another Thread"""
+    loop = asyncio.new_event_loop()
+    q.put(loop)
     loop.run_forever()
-
-
-@contextmanager
-def get_event_loop():
-    """Use a context manager to manage the thread's lifecycle"""
-    loop = asyncio.get_event_loop()
-    thread = Thread(target=run_event_loop, args=(loop,))
-    thread.daemon = True
-    thread.start()
-    try:
-        yield loop
-    finally:
-        thread.join()
 
 
 def main(args=sys.argv[1:]):
     """Run the main application"""
     if "--reload" in args:
         import hupper
-
         package = Path(__file__).parent.parent
         sys.path.append(str(package))
         # start_reloader will only return in a monitored subprocess
@@ -120,7 +107,10 @@ def main(args=sys.argv[1:]):
         # monitor an extra file
         # reloader.watch_files(['foo.ini'])
 
-        with get_event_loop() as loop:
+        q = Queue()
+        with ThreadPoolExecutor(max_workers=1) as executor:
+            executor.submit(run_event_loop, q)
+            loop = q.get()
             app = Application(loop)
             app.run()
 
