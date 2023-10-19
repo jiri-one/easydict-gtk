@@ -318,7 +318,7 @@ class FrontPage(Gtk.Box):
         label.set_justify(Gtk.Justification.CENTER)
         label.set_wrap(True)
         label.set_markup(
-            '\n<b><span size="x-large">Welcome to EasyDict</span></b>\n\nJust start typing to show results!\n'
+            '\n<b><span size="x-large">Welcome to EasyDict</span></b>\n\nJust start typing to see results!\n'
         )
         return label
 
