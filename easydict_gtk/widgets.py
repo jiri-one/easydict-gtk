@@ -203,12 +203,6 @@ class SearchBar(Gtk.SearchBar):
         # Turn ON search mode
         self.set_search_mode(True)
 
-    def on_entry_changed(self, hm):
-        print("změna", hm)
-
-    def set_callback(self, callback):
-        """Connect the search entry activate to an callback handler"""
-        self.entry.connect("activate", callback)
 
     async def search_task(self, word, lng, search_type):
         # default language for results

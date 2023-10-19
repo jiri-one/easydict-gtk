@@ -26,3 +26,8 @@ easydict-gtk = 'easydict_gtk.easydict:main'
 
 [tool.poetry-version-plugin]
 source = "init"
+
+[tool.pytest.ini_options]
+pythonpath = "easydict_gtk"
+testpaths = "tests"
+asyncio_mode = "auto"

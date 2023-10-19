@@ -2,8 +2,8 @@ import pytest
 import pytest_asyncio
 
 # internal imports
-from easydict_nicegui.backends.sqlite_backend import search_async, SQLiteBackend
-from easydict_nicegui.backends.backend import Result
+from easydict_gtk.backends.sqlite_backend import search_async, SQLiteBackend
+from easydict_gtk.backends.backend import Result
 
 # type anotations
 adb: SQLiteBackend

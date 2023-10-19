@@ -2,7 +2,7 @@ import difflib
 import re
 
 # imports from my other files with classes and methods
-from settings import cwd, images, eng_cze, where
+from .settings import cwd, images, eng_cze, where
 
 
 def db_search(language, text, fulltext):
@@ -24,7 +24,7 @@ class CreateHtml:
         <html>
         <body style="background-color:#2d2d2d;", oncontextmenu="return false">
         <p style="font-size: 22px;text-align:center;"><b><span style="color: #ffffff;">Welcome to EasyDict</span></b></p>
-        <p style="text-align:center;"><img src="{str(cwd_images / "ed_icon.png")}"></p>
+        <p style="text-align:center;"><img src="{str(images / "ed_icon.png")}"></p>
         <p style="font-size: 22px;text-align:center;"><span style="color: #ffffff;">The first open source translator which is completely open with dictionary data too.</span></p>
         </body>
         </html>"""
