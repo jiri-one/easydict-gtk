@@ -256,18 +256,32 @@ class SearchBar(Gtk.SearchBar):
         # if we initiate new search task and search word is not empty
         if create_new_task and word != "":
             await self.search_task(word, lng, search_type)
-        # elif the word is empty, so we will empty tthe listview
-        elif create_new_task and word == "":
-            # need to update the ListViewString store - it is StringList
-            store = self.win.listview_str.store
-            # remove all search results from current store
-            GLib.idle_add(store.splice, 0, len(store))
+
+        # NOTE: this part down is now not unnecessary, because we delete content of store in on_search method
+
+        # elif the word is empty, so we will empty the listview
+        # elif create_new_task and word == "":
+        #     # need to update the ListViewString store - it is StringList
+        #     store = self.win.listview_str.store
+        #     # remove all search results from current store
+        #     GLib.idle_add(store.splice, 0, len(store))
 
     def on_search(self, caller_obj):
-        # get current language settings
-        lng = self.dropdown.get_selected_item().props.string.lower()
         # get text from search entry
         word = self.entry.props.text
+        # if we have word (searched text), then we need show the stack with results
+        if word:
+            self.win.main_box.remove(self.win.front_page)
+            self.win.main_box.append(self.win.stack)
+        else:  # if entry is empty, we will shof front page
+            self.win.main_box.remove(self.win.stack)
+            self.win.main_box.append(self.win.front_page)
+            store = self.win.listview_str.store
+            # and remove all search results from current store
+            store.splice(0, len(store))
+            return None
+        # get current language settings
+        lng = self.dropdown.get_selected_item().props.string.lower()
         # get current search type
         search_type = self.search_type
         asyncio.run_coroutine_threadsafe(
@@ -320,7 +334,6 @@ class FrontPage(Gtk.Box):
         image = Gtk.Image.new_from_pixbuf(logo_pixbuf)
         image.set_size_request(500, 500)
         image.set_halign(Gtk.Align.CENTER)
-
         return image
 
     def slogan_label(self):
@@ -370,6 +383,7 @@ class MyListViewStrings(ListViewStrings):
         label = Gtk.Label()
         label.set_halign(Gtk.Align.START)
         label.set_hexpand(True)
+        label.set_wrap(True)
         label.set_margin_start(10)
         item.set_child(label)
 

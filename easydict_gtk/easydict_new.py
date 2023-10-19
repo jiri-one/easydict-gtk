@@ -23,8 +23,8 @@ class MyWindow(Adw.ApplicationWindow):
         self.load_css("ui/search_box.css")
         self.set_default_size(width, height)
         self.set_title(title)
-        box = Gtk.Box()
-        box.props.orientation = Gtk.Orientation.VERTICAL
+        self.main_box = Gtk.Box()
+        self.main_box.props.orientation = Gtk.Orientation.VERTICAL
         header = Gtk.HeaderBar()
         # Add Options button (Menu content need to be added)
         option_btn = Gtk.MenuButton()
@@ -32,15 +32,15 @@ class MyWindow(Adw.ApplicationWindow):
         self.search_options = option_btn
         header.pack_start(option_btn)
         search = SearchBar(loop, self)
-        front_page = FrontPage()
-        stack = Adw.ViewStack()
-        box.append(header)
-        box.append(search)
-        box.append(front_page)
+        self.front_page = FrontPage()
+        self.stack = Adw.ViewStack()
+        self.main_box.append(header)
+        self.main_box.append(search)
+        self.main_box.append(self.front_page)
         content = self.setup_content()
-        stack.add(content)
-        # box.append(stack)
-        self.set_content(box)
+        self.stack.add(content)
+        # box.append(self.stack)
+        self.set_content(self.main_box)
 
     def setup_content(self):
         # Simple Listview with strings
