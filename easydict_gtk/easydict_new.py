@@ -25,7 +25,11 @@ class MyWindow(Adw.ApplicationWindow):
         self.set_title(title)
         self.main_box = Gtk.Box()
         self.main_box.props.orientation = Gtk.Orientation.VERTICAL
+        title_label = Gtk.Label.new()
+        title_label.set_justify(Gtk.Justification.CENTER)
+        title_label.set_markup('EasyDict-GTK\n<small>Completely open translator</small>')
         header = Gtk.HeaderBar()
+        header.set_title_widget(title_label)
         # Add Options button (Menu content need to be added)
         option_btn = Gtk.MenuButton()
         option_btn.set_icon_name("preferences-other-symbolic")
