@@ -19,6 +19,7 @@ from widgets import MyListViewStrings, SearchBar, FrontPage
 # internal imports
 from settings import images
 
+
 class MyWindow(Adw.ApplicationWindow):
     def __init__(self, title, width, height, loop, **kwargs):
         super(MyWindow, self).__init__(**kwargs)
@@ -29,7 +30,9 @@ class MyWindow(Adw.ApplicationWindow):
         self.main_box.props.orientation = Gtk.Orientation.VERTICAL
         title_label = Gtk.Label.new()
         title_label.set_justify(Gtk.Justification.CENTER)
-        title_label.set_markup('EasyDict-GTK\n<small>Completely open translator</small>')
+        title_label.set_markup(
+            "EasyDict-GTK\n<small>Completely open translator</small>"
+        )
         header = Gtk.HeaderBar()
         header.set_title_widget(title_label)
         # Add Options button (Menu content need to be added)

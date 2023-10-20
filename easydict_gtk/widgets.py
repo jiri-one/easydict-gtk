@@ -203,7 +203,6 @@ class SearchBar(Gtk.SearchBar):
         # Turn ON search mode
         self.set_search_mode(True)
 
-
     async def search_task(self, word, lng, search_type):
         # default language for results
         lng1 = lng
