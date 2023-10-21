@@ -14,7 +14,7 @@ gi.require_version("Gtk", "4.0")
 gi.require_version("Adw", "1")
 
 from gi.repository import Gtk, GLib, GObject, Gio, Adw
-from widgets import MyListViewStrings, SearchBar, FrontPage
+from widgets import MyListViewStrings, SearchBar, FrontPage, MenuButton
 
 # internal imports
 from settings import images
@@ -35,12 +35,8 @@ class MyWindow(Adw.ApplicationWindow):
         )
         header = Gtk.HeaderBar()
         header.set_title_widget(title_label)
-        # Add Options button (Menu content need to be added)
-        opt_image = Gtk.Image.new_from_file(images["ed_pref_icon.png"])
-        opt_image.set_size_request(60, 60)
-        option_btn = Gtk.MenuButton()
-        option_btn.set_child(opt_image)
-        option_btn.set_child_visible(True)
+        # Add Options button (Menu content is defined inside the MenuButton class)
+        option_btn = MenuButton(self)
         self.search_options = option_btn
         header.pack_start(option_btn)
         search = SearchBar(loop, self)
@@ -84,6 +80,9 @@ class MyWindow(Adw.ApplicationWindow):
                 return None
             print(f"loading custom styling : {css_fn}")
             self.css_provider = css_provider
+
+    def print_something(self):
+        print("something")
 
 
 class Application(Adw.Application):

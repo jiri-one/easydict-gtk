@@ -339,17 +339,49 @@ class FrontPage(Gtk.Box):
 
 class MenuButton(Gtk.MenuButton):
     """
-    Wrapper class for at Gtk.Menubutton with a menu defined
-    in a Gtk.Builder xml string
+    Wrapper class for at Gtk.Menubutton
     """
 
-    def __init__(self, xml, name, icon_name="open-menu-symbolic"):
+    def __init__(self, win):
         super(MenuButton, self).__init__()
-        builder = Gtk.Builder()
-        builder.add_from_string(xml)
-        menu = builder.get_object(name)
-        self.set_menu_model(menu)
-        self.set_icon_name(icon_name)
+        self.win = win
+        opt_image = Gtk.Image.new_from_file(images["ed_pref_icon.png"])
+        opt_image.set_size_request(60, 60)
+        self.set_child(opt_image)
+        self.set_child_visible(True)
+        self.create_actions_for_main_window()
+        popover_menu = self.create_popover_menu()
+        self.set_popover(popover_menu)
+
+    def create_actions_for_main_window(self):
+        # Create a new "Action for Settings button"
+        action = Gio.SimpleAction.new("settings", None)
+        action.connect("activate", lambda *args: print("Settings button"))
+        self.win.add_action(action)
+        # Create a new "Action for Help button"
+        action = Gio.SimpleAction.new("help", None)
+        action.connect("activate", lambda *args: print("Help button"))
+        self.win.add_action(action)
+        # Create a new "Action for About button"
+        action = Gio.SimpleAction.new("about", None)
+        action.connect("activate", lambda *args: print("About button"))
+        self.win.add_action(action)
+        # Create a new "Action for Quit button"
+        action = Gio.SimpleAction.new("quit", None)
+        action.connect("activate", lambda *args: print("Quit button"))
+        self.win.add_action(action)
+
+    def create_popover_menu(self):
+        popover = Gtk.PopoverMenu()
+        menu = Gio.Menu.new()
+        # add menu items with connected actions
+        menu.append("Settings", "win.settings")
+        menu.append("Help", "win.help")
+        menu.append("About", "win.about")
+        menu.append("Quit", "win.quit")
+        popover.set_menu_model(menu)
+        popover.set_has_arrow(True)
+        return popover
 
 
 class MyListViewStrings(ListViewStrings):
