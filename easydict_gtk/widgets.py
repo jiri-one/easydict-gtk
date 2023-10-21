@@ -1,14 +1,8 @@
 """
 Widgets for EasyDict-GTK
 """
-import os.path
 import asyncio
-import threading
-from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor
-from functools import partial
-
 from abc import abstractmethod
-from textwrap import dedent
 from settings import images
 
 import gi
