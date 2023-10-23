@@ -172,8 +172,6 @@ class MyListViewStrings(ListViewStrings):
         data = item.get_item()
         # Update Gtk.Label with data from model item
         label.set_markup(data.get_string())
-        # Update Gtk.Switch with data from model item
-        item.set_child(label)
 
     def selection_changed(self, widget, ndx: int):
         """trigged when selecting in listview is changed"""
