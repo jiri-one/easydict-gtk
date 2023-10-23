@@ -137,6 +137,7 @@ def main(args=sys.argv[1:]):
     """Run the main application"""
     if "--reload" in args:
         import hupper
+
         package = Path(__file__).parent.parent
         sys.path.append(str(package))
         # start_reloader will only return in a monitored subprocess

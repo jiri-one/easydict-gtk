@@ -8,7 +8,7 @@ from settings import images
 import gi
 
 gi.require_version("Gtk", "4.0")
-from gi.repository import Gtk, Gio, GLib, Gdk, GdkPixbuf
+from gi.repository import Gtk, Gio, GLib, Gdk, GdkPixbuf, GObject
 
 # internal imports
 from backends.sqlite_backend import search_async
@@ -136,6 +136,54 @@ class ListViewStrings(ListViewBase):
         return Gtk.StringList()
 
 
+class MyListViewStrings(ListViewStrings):
+    """Custom ListView"""
+
+    def __init__(self, win: Gtk.ApplicationWindow):
+        # Init ListView with store model class.
+        super(MyListViewStrings, self).__init__()
+        self.win = win
+        self.set_vexpand(True)
+        # put some data into the model
+        # results = db_search("eng", "live", fulltext=False)
+        # for row in results:
+        #     self.add(f"""<b>{row["eng"]}</b>\n {row["cze"]}""")
+
+    def factory_setup(self, widget: Gtk.ListView, item: Gtk.ListItem):
+        """Gtk.SignalListItemFactory::setup signal callback (overloaded from parent class)
+
+        Handles the creation widgets to put in the ListView
+        """
+        label = Gtk.Label()
+        label.set_halign(Gtk.Align.START)
+        label.set_hexpand(True)
+        label.set_wrap(True)
+        label.set_margin_start(10)
+        item.set_child(label)
+
+    def factory_bind(self, widget: Gtk.ListView, item: Gtk.ListItem):
+        """Gtk.SignalListItemFactory::bind signal callback (overloaded from parent class)
+
+        Handles adding data for the model to the widgets created in setup
+        """
+        # get the Gtk.Label
+        label = item.get_child()
+        # get the model item, connected to current ListItem
+        data = item.get_item()
+        # Update Gtk.Label with data from model item
+        label.set_markup(data.get_string())
+        # Update Gtk.Switch with data from model item
+        item.set_child(label)
+
+    def selection_changed(self, widget, ndx: int):
+        """trigged when selecting in listview is changed"""
+        # print("ZDEEEEEEEEEEE", self.win, widget, ndx)
+        # markup = self.win._get_text_markup(
+        #     f"Row {ndx} was selected ( {self.store[ndx].get_string()} )"
+        # )
+        # self.win.page4_label.set_markup(markup)
+
+
 class SearchBar(Gtk.SearchBar):
     """Wrapper for Gtk.Searchbar Gtk.SearchEntry"""
 
@@ -158,7 +206,7 @@ class SearchBar(Gtk.SearchBar):
         # add Search button
         self.button = Gtk.Button(label="Search")
         # Add DropDown menu
-        self.dropdown = Gtk.DropDown.new_from_strings(["ENG", "CZE"])
+        self.dropdown = LanguageDropdown()
         self.button.connect("clicked", self.on_search)
         # first_hbox.append(self.button)
         first_hbox.append(self.dropdown)
@@ -271,7 +319,7 @@ class SearchBar(Gtk.SearchBar):
             # store.splice(0, len(store))
             # return None
         # get current language settings
-        lng = self.dropdown.get_selected_item().props.string.lower()
+        lng = self.dropdown.get_selected_item().language.lower()
         # get current search type
         search_type = self.search_type
         asyncio.run_coroutine_threadsafe(
@@ -384,49 +432,47 @@ class MenuButton(Gtk.MenuButton):
         return popover
 
 
-class MyListViewStrings(ListViewStrings):
-    """Custom ListView"""
+class Item_LngAndFlag(GObject.GObject):
+    """Custom data element for a ListStore (Must be based on GObject)"""
 
-    def __init__(self, win: Gtk.ApplicationWindow):
-        # Init ListView with store model class.
-        super(MyListViewStrings, self).__init__()
-        self.win = win
-        self.set_vexpand(True)
-        # put some data into the model
-        # results = db_search("eng", "live", fulltext=False)
-        # for row in results:
-        #     self.add(f"""<b>{row["eng"]}</b>\n {row["cze"]}""")
+    def __init__(self, language: str, flag_file: str):
+        super().__init__()
+        self.language = language
+        self.flag_file = flag_file
 
-    def factory_setup(self, widget: Gtk.ListView, item: Gtk.ListItem):
-        """Gtk.SignalListItemFactory::setup signal callback (overloaded from parent class)
 
-        Handles the creation widgets to put in the ListView
-        """
+class LanguageDropdown(Gtk.DropDown):
+    """Custom List for DropDown menu with flags"""
+
+    def __init__(self):
+        super().__init__()
+        self.list_store = Gio.ListStore.new(item_type=Item_LngAndFlag)
+        self.setup_content_for_store()
+        self.set_model(self.list_store)
+        factory = Gtk.SignalListItemFactory()
+        self.set_factory(factory)
+        factory.connect("setup", self.factory_setup)
+        factory.connect("bind", self.factory_bind)
+
+    def setup_content_for_store(self):
+        for lng, flag in zip(["ENG", "CZE"], ["flag_eng.svg", "flag_cze.svg"]):
+            self.list_store.append(Item_LngAndFlag(lng, flag))
+
+    def factory_setup(self, factory, item: Gtk.ListItem):
+        box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
+        img = Gtk.Image()
+        img.set_size_request(30, 30)
         label = Gtk.Label()
-        label.set_halign(Gtk.Align.START)
-        label.set_hexpand(True)
-        label.set_wrap(True)
-        label.set_margin_start(10)
-        item.set_child(label)
+        box.append(label)
+        box.append(img)
+        item.set_child(box)
 
-    def factory_bind(self, widget: Gtk.ListView, item: Gtk.ListItem):
-        """Gtk.SignalListItemFactory::bind signal callback (overloaded from parent class)
-
-        Handles adding data for the model to the widgets created in setup
-        """
-        # get the Gtk.Label
-        label = item.get_child()
-        # get the model item, connected to current ListItem
-        data = item.get_item()
-        # Update Gtk.Label with data from model item
-        label.set_markup(data.get_string())
-        # Update Gtk.Switch with data from model item
-        item.set_child(label)
-
-    def selection_changed(self, widget, ndx: int):
-        """trigged when selecting in listview is changed"""
-        # print("ZDEEEEEEEEEEE", self.win, widget, ndx)
-        # markup = self.win._get_text_markup(
-        #     f"Row {ndx} was selected ( {self.store[ndx].get_string()} )"
-        # )
-        # self.win.page4_label.set_markup(markup)
+    def factory_bind(self, factory, item: Gtk.ListItem):
+        box: Gtk.Box = item.get_child()
+        item_data: Item_LngAndFlag = item.get_item()
+        label = box.get_first_child()
+        label.set_label(item_data.language)
+        label.set_margin_end(10)
+        img = box.get_last_child()
+        pixbuf = GdkPixbuf.Pixbuf.new_from_file(images[item_data.flag_file])
+        img.set_from_pixbuf(pixbuf)
