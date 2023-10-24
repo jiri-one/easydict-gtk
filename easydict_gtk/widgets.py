@@ -342,7 +342,7 @@ class SearchBar(Gtk.SearchBar):
 
 
 class FrontPage(Gtk.Box):
-    """Fron page of EasyDict-GTK in one Box"""
+    """Front page of EasyDict-GTK in one Box"""
 
     def __init__(self):
         super().__init__()
@@ -414,7 +414,7 @@ class MenuButton(Gtk.MenuButton):
         self.win.add_action(action)
         # Create a new "Action for Quit button"
         action = Gio.SimpleAction.new("quit", None)
-        action.connect("activate", lambda *args: print("Quit button"))
+        action.connect("activate", lambda *args: self.win.destroy())
         self.win.add_action(action)
 
     def create_popover_menu(self):

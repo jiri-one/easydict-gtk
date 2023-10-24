@@ -50,6 +50,7 @@ class MyWindow(Adw.ApplicationWindow):
         # box.append(self.stack)
         self.set_content(self.main_box)
 
+
     def setup_content(self):
         # Simple Listview with strings
         self.listview_str = MyListViewStrings(self)
