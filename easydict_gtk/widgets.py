@@ -8,7 +8,7 @@ from settings import images
 import gi
 
 gi.require_version("Gtk", "4.0")
-from gi.repository import Gtk, Gio, GLib, Gdk, GdkPixbuf, GObject
+from gi.repository import Gtk, Gio, GLib, Gdk, GdkPixbuf, GObject, Adw
 
 # internal imports
 from backends.sqlite_backend import search_async
@@ -410,11 +410,11 @@ class MenuButton(Gtk.MenuButton):
         self.win.add_action(action)
         # Create a new "Action for About button"
         action = Gio.SimpleAction.new("about", None)
-        action.connect("activate", lambda *args: print("About button"))
+        action.connect("activate", lambda *args: self.show_about_dialog())
         self.win.add_action(action)
         # Create a new "Action for Quit button"
         action = Gio.SimpleAction.new("quit", None)
-        action.connect("activate", lambda *args: self.win.destroy())
+        action.connect("activate", lambda *args: self.win.destroy()) 
         self.win.add_action(action)
 
     def create_popover_menu(self):
@@ -428,6 +428,43 @@ class MenuButton(Gtk.MenuButton):
         popover.set_menu_model(menu)
         popover.set_has_arrow(True)
         return popover
+    
+    def show_about_dialog(self):
+        about = Gtk.AboutDialog()
+        about.set_transient_for(self.win)  # Makes the dialog always appear in from of the parent window
+        about.set_modal(self.win)  # Makes the parent window unresponsive while dialog is showing
+
+        about.set_authors(["Jiří Němec - main developer", "Martin Mrňák - some tests"])
+        about.set_copyright("Copyright 2023 Jiří Němec")
+        about.set_license_type(Gtk.License.GPL_3_0)
+        about.set_website("https://easydict.jiri.one")
+        about.set_website_label("https://easydict.jiri.one")
+        about.set_version("0.5")
+        about.set_artists(["Jiří Martin"])
+        pixbuf_logo = GdkPixbuf.Pixbuf.new_from_file(images["ed_icon.png"])
+        logo = Gdk.Texture.new_for_pixbuf(pixbuf_logo)
+        about.set_logo(logo)
+
+        about.set_visible(True)
+
+        # we can use Adw.AboutWindow (botton), but it is not so nice and it is harder to set logo
+        # app = self.win.get_application()
+        # dialog = Adw.AboutWindow(transient_for=app.get_active_window()) 
+        # dialog.set_application_name=("EasyDict-GTK") 
+        # dialog.set_version("v0.5")
+        # dialog.set_developer_name("Jiří Němec") 
+        # dialog.set_license_type(Gtk.License(Gtk.License.GPL_3_0)) 
+        # dialog.set_comments("Adw about Window example") 
+        # dialog.set_website("https://easydict.jiri.one") 
+        # dialog.set_issue_url("https://github.com/jiri-one/easydict-gtk/issues")
+        # dialog.set_artists(["Jiří Martin"])
+        # dialog.add_credit_section("Contributors", ["Martin Mrňák - tests"]) 
+        # dialog.set_copyright("© 2023 Jiří Němec") 
+        # dialog.set_developers(["Jiří Němec"]) 
+        # dialog.set_application_icon("com.github.devname.appname") # icon must be uploaded in ~/.local/share/icons or /usr/share/icons
+
+        # dialog.set_visible(True)
+
 
 
 class Item_LngAndFlag(GObject.GObject):
