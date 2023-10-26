@@ -450,6 +450,7 @@ class MenuButton(Gtk.MenuButton):
         frame.set_child(sw)
         help_dialog = Gtk.Dialog.new()
         help_dialog.set_transient_for(self.win)
+        help_dialog.set_title("Help dialog")
         content_area = help_dialog.get_content_area()
         content_area.append(frame)
         help_dialog.set_size_request(800, 800)
