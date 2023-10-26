@@ -13,6 +13,7 @@ from gi.repository import Gtk, Gio, GLib, Gdk, GdkPixbuf, GObject, Adw
 
 # internal imports
 from backends.sqlite_backend import search_async
+from dialogs import SettingsDialog
 
 
 class ListViewBase(Gtk.ListView):
@@ -393,7 +394,7 @@ class MenuButton(Gtk.MenuButton):
         super(MenuButton, self).__init__()
         self.win = win
         opt_image = Gtk.Image.new_from_file(images["ed_pref_icon.png"])
-        opt_image.set_size_request(60, 60)
+        opt_image.set_size_request(50, 50)
         self.set_child(opt_image)
         self.set_child_visible(True)
         self.create_actions_for_main_window()
@@ -403,7 +404,7 @@ class MenuButton(Gtk.MenuButton):
     def create_actions_for_main_window(self):
         # Create a new "Action for Settings button"
         action = Gio.SimpleAction.new("settings", None)
-        action.connect("activate", lambda *args: print("Settings button"))
+        action.connect("activate", lambda *args: self.create_settings_dialog())
         self.win.add_action(action)
         # Create a new "Action for Help button"
         action = Gio.SimpleAction.new("help", None)
@@ -417,6 +418,10 @@ class MenuButton(Gtk.MenuButton):
         action = Gio.SimpleAction.new("quit", None)
         action.connect("activate", lambda *args: self.win.destroy())
         self.win.add_action(action)
+    
+    def create_settings_dialog(self):
+        sd = SettingsDialog(self.win)
+        sd()
 
     def create_popover_menu(self):
         popover = Gtk.PopoverMenu()
