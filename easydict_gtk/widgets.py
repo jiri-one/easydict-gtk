@@ -4,6 +4,7 @@ Widgets for EasyDict-GTK
 import asyncio
 from abc import abstractmethod
 from settings import images
+from pathlib import Path
 
 import gi
 
@@ -406,7 +407,7 @@ class MenuButton(Gtk.MenuButton):
         self.win.add_action(action)
         # Create a new "Action for Help button"
         action = Gio.SimpleAction.new("help", None)
-        action.connect("activate", lambda *args: print("Help button"))
+        action.connect("activate", lambda *args: self.show_help_dialog())
         self.win.add_action(action)
         # Create a new "Action for About button"
         action = Gio.SimpleAction.new("about", None)
@@ -414,7 +415,7 @@ class MenuButton(Gtk.MenuButton):
         self.win.add_action(action)
         # Create a new "Action for Quit button"
         action = Gio.SimpleAction.new("quit", None)
-        action.connect("activate", lambda *args: self.win.destroy()) 
+        action.connect("activate", lambda *args: self.win.destroy())
         self.win.add_action(action)
 
     def create_popover_menu(self):
@@ -428,11 +429,35 @@ class MenuButton(Gtk.MenuButton):
         popover.set_menu_model(menu)
         popover.set_has_arrow(True)
         return popover
-    
+
+    def show_help_dialog(self):
+        text_buffer = Gtk.TextBuffer.new()
+        with open(Path(__file__).parent / "dict_data/help_eng.txt") as file:
+            help_eng_text = file.read()
+
+        text_buffer.set_text(help_eng_text)
+        text_view = Gtk.TextView.new_with_buffer(text_buffer)
+        text_view.set_vexpand(True)
+        text_view.set_wrap_mode(Gtk.WrapMode.WORD)
+        sw = Gtk.ScrolledWindow()
+        sw.set_child(text_view)
+        frame = Gtk.Frame()
+        frame.set_child(sw)
+        help_dialog = Gtk.Dialog.new()
+        help_dialog.set_transient_for(self.win)
+        content_area = help_dialog.get_content_area()
+        content_area.append(frame)
+        help_dialog.set_size_request(800, 800)
+        help_dialog.set_visible(True)
+
     def show_about_dialog(self):
         about = Gtk.AboutDialog()
-        about.set_transient_for(self.win)  # Makes the dialog always appear in from of the parent window
-        about.set_modal(self.win)  # Makes the parent window unresponsive while dialog is showing
+        about.set_transient_for(
+            self.win
+        )  # Makes the dialog always appear in from of the parent window
+        about.set_modal(
+            self.win
+        )  # Makes the parent window unresponsive while dialog is showing
 
         about.set_authors(["Jiří Němec - main developer", "Martin Mrňák - some tests"])
         about.set_copyright("Copyright 2023 Jiří Němec")
@@ -449,22 +474,21 @@ class MenuButton(Gtk.MenuButton):
 
         # we can use Adw.AboutWindow (botton), but it is not so nice and it is harder to set logo
         # app = self.win.get_application()
-        # dialog = Adw.AboutWindow(transient_for=app.get_active_window()) 
-        # dialog.set_application_name=("EasyDict-GTK") 
+        # dialog = Adw.AboutWindow(transient_for=app.get_active_window())
+        # dialog.set_application_name=("EasyDict-GTK")
         # dialog.set_version("v0.5")
-        # dialog.set_developer_name("Jiří Němec") 
-        # dialog.set_license_type(Gtk.License(Gtk.License.GPL_3_0)) 
-        # dialog.set_comments("Adw about Window example") 
-        # dialog.set_website("https://easydict.jiri.one") 
+        # dialog.set_developer_name("Jiří Němec")
+        # dialog.set_license_type(Gtk.License(Gtk.License.GPL_3_0))
+        # dialog.set_comments("Adw about Window example")
+        # dialog.set_website("https://easydict.jiri.one")
         # dialog.set_issue_url("https://github.com/jiri-one/easydict-gtk/issues")
         # dialog.set_artists(["Jiří Martin"])
-        # dialog.add_credit_section("Contributors", ["Martin Mrňák - tests"]) 
-        # dialog.set_copyright("© 2023 Jiří Němec") 
-        # dialog.set_developers(["Jiří Němec"]) 
+        # dialog.add_credit_section("Contributors", ["Martin Mrňák - tests"])
+        # dialog.set_copyright("© 2023 Jiří Němec")
+        # dialog.set_developers(["Jiří Němec"])
         # dialog.set_application_icon("com.github.devname.appname") # icon must be uploaded in ~/.local/share/icons or /usr/share/icons
 
         # dialog.set_visible(True)
-
 
 
 class Item_LngAndFlag(GObject.GObject):
