@@ -4,6 +4,7 @@ import gi
 gi.require_version("Gtk", "4.0")
 from gi.repository import Gtk, Gio, GLib, Gdk, GdkPixbuf, GObject, Adw
 
+
 class SettingsDialog(Gtk.Dialog):
     def __init__(self, win):
         super().__init__()

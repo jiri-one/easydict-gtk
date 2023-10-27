@@ -14,7 +14,7 @@ from os import environ
 package = Path(__file__).parent.parent
 sys.path.append(str(package))
 
-from easydict_gtk.utils import CreateHtml, db_search
+from easydict_gtk.utils import db_search
 from easydict_gtk.handlers import Handlers
 from easydict_gtk.settings import cwd, images, Settings
 

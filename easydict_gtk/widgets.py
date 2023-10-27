@@ -418,10 +418,10 @@ class MenuButton(Gtk.MenuButton):
         action = Gio.SimpleAction.new("quit", None)
         action.connect("activate", lambda *args: self.win.destroy())
         self.win.add_action(action)
-    
+
     def create_settings_dialog(self):
         sd = SettingsDialog(self.win)
-        sd()
+        sd()  # call this and show the Settings Dialog
 
     def create_popover_menu(self):
         popover = Gtk.PopoverMenu()
@@ -444,6 +444,7 @@ class MenuButton(Gtk.MenuButton):
         text_view = Gtk.TextView.new_with_buffer(text_buffer)
         text_view.set_vexpand(True)
         text_view.set_wrap_mode(Gtk.WrapMode.WORD)
+        text_view.set_editable(False)
         sw = Gtk.ScrolledWindow()
         sw.set_child(text_view)
         frame = Gtk.Frame()

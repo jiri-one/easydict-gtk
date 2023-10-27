@@ -1,8 +1,12 @@
-from pathlib import Path
-from os import environ
+# imports of TinyDB
+from tinydb import TinyDB, Query, where
+from tinydb.middlewares import CachingMiddleware
 
-# internal imports
-from utils import get_xdg_config_home
+# import my ORJSON extension for TinyDB
+# from easydict_gtk.orjson_storage import ORJSONStorage
+
+# import to set current working directory
+from pathlib import Path
 
 
 # set current working directory
@@ -11,9 +15,16 @@ cwd = Path(__file__).parent
 images = dict()
 for img_path in (cwd / "images").iterdir():
     images[img_path.name] = str(img_path.resolve())
+cfg_dir = Path.home() / ".config" / "easydict"  # set user config directory
+cfg_dir.mkdir(exist_ok=True)  # create the config directory if not exists
 
+# main db with eng-cze dict (name just db, but table is eng_cze and EasyDict works with that table)
+db = TinyDB(cwd / "dict_data" / "tinydb_eng-cze.json", encoding="UTF-8")
+eng_cze = db.table("eng_cze")
 
-cfg_dir = get_xdg_config_home()  # set user config directory
+# second db to store and restore program settings (name prefdb, with just _default table)
+prefdb = TinyDB(cfg_dir / "settings.json")
+query = Query()
 
 
 class Settings:
