@@ -7,7 +7,8 @@ from utils import get_xdg_config_home
 
 DEFAULT_SETTINGS = {
     "win_size_remember": (True, bool),
-    "window_size": ("1200x600", str),
+    "win_height": (1200, int),
+    "win_width": (600, int),
     "clipboard_scan": (True, bool),
     "search_language": ("eng", str),
 }
@@ -29,7 +30,9 @@ class Settings:
         config = configparser.ConfigParser()
         # check if ini_file exists and if not, create it
         if not ini_file.exists():
-            config["EASYDICT"] = {key: value[0] for key, value in DEFAULT_SETTINGS}
+            config["EASYDICT"] = {
+                key: value[0] for key, value in DEFAULT_SETTINGS.items()
+            }
             with open(ini_file, "w") as configfile:
                 config.write(configfile)
         # read the ini file
@@ -43,15 +46,16 @@ class Settings:
             try:
                 value_type = DEFAULT_SETTINGS[key][1]
             except KeyError as e:
-                raise (
+                raise KeyError(
                     f"In easydict.ini file in section EASYDICT are allowed only known keys \n\n {e}"
                 )
             except IndexError:
                 raise f"There is some internal error: \n\n {e}"
-            if (
-                value_type == bool
-            ):  # in the future we can use eval for more types or care them separately (like bool, list, ..) which is safer
+            if value_type == bool:
+                # getboolean method is case insensitive and care about more variants
                 value = ed_config.getboolean(key)
+            elif value_type == int:
+                value = int(value)
             setattr(self, key, value)
         # assert that all keys were read from file and are set
         try:
@@ -59,5 +63,6 @@ class Settings:
                 assert hasattr(self, key)
         except AssertionError as e:
             raise ValueError(f"Some keys from file were read broken: \n\n {e}")
+
 
 ed_setup = Settings(ini_file)

@@ -17,14 +17,15 @@ from gi.repository import Gtk, GLib, GObject, Gio, Adw
 from widgets import MyListViewStrings, SearchBar, FrontPage, MenuButton
 
 # internal imports
-from settings import images
+from settings import images, ed_setup
 
 
 class MyWindow(Adw.ApplicationWindow):
-    def __init__(self, title, width, height, loop, **kwargs):
+    def __init__(self, title, loop, **kwargs):
         super(MyWindow, self).__init__(**kwargs)
         self.load_css("ui/search_box.css")
-        self.set_default_size(width, height)
+        self.setup = ed_setup
+        self.set_default_size(ed_setup.win_width, ed_setup.win_height)
         self.set_title(title)
         self.main_box = Gtk.Box()
         self.main_box.props.orientation = Gtk.Orientation.VERTICAL
@@ -98,7 +99,7 @@ class Application(Adw.Application):
     def do_activate(self):
         win = self.props.active_window
         if not win:
-            win = MyWindow("EasyDict-GTK", 600, 1200, loop=self._loop, application=self)
+            win = MyWindow("EasyDict-GTK", loop=self._loop, application=self)
         win.present()
 
 
