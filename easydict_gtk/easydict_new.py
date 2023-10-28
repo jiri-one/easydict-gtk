@@ -24,7 +24,6 @@ class MyWindow(Adw.ApplicationWindow):
     def __init__(self, title, loop, **kwargs):
         super(MyWindow, self).__init__(**kwargs)
         self.load_css("ui/search_box.css")
-        self.setup = ed_setup
         self.set_default_size(ed_setup.win_width, ed_setup.win_height)
         self.set_title(title)
         self.main_box = Gtk.Box()

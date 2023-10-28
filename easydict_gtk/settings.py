@@ -1,16 +1,34 @@
 from pathlib import Path
-from os import environ
 import configparser
 
 # internal imports
 from utils import get_xdg_config_home
 
-DEFAULT_SETTINGS = {
-    "win_size_remember": (True, bool),
-    "win_height": (1200, int),
-    "win_width": (600, int),
-    "clipboard_scan": (True, bool),
-    "search_language": ("eng", str),
+DEFAULT_SETTINGS = (
+    {  # TODO: for any value we can add validator, like third element of tuple
+        "win_size_remember": (True, bool),
+        "win_height": (1200, int),
+        "win_width": (600, int),
+        "clipboard_scan": (True, bool),
+        "search_language": ("eng", str),
+    }
+)
+
+LANGUAGES_DATA = {
+    "eng": {
+        "id": 0,
+        "label": "ENG",
+        "name": "English",
+        "native_name": "English",
+        "flag_file": "flag_eng.svg",
+    },
+    "cze": {
+        "id": 1,
+        "label": "CZE",
+        "name": "Czech",
+        "native_name": "Česky",
+        "flag_file": "flag_cze.svg",
+    },
 }
 
 # set current working directory
