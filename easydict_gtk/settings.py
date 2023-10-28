@@ -5,12 +5,12 @@ import configparser
 from utils import get_xdg_config_home
 
 DEFAULT_SETTINGS = (
-    {  # TODO: for any value we can add validator, like third element of tuple
-        "win_size_remember": (True, bool),
-        "win_height": (1200, int),
-        "win_width": (600, int),
-        "clipboard_scan": (True, bool),
-        "search_language": ("eng", str),
+    {  # TODO: for any value we can add validator
+        "win_size_remember": {"value": True, "type": bool},
+        "win_height": {"value": 1200, "type": int},
+        "win_width": {"value": 600, "type": int},
+        "clipboard_scan": {"value": True, "type": bool},
+        "search_language": {"value": "eng", "type": str},
     }
 )
 
@@ -49,7 +49,7 @@ class Settings:
         # check if ini_file exists and if not, create it
         if not ini_file.exists():
             config["EASYDICT"] = {
-                key: value[0] for key, value in DEFAULT_SETTINGS.items()
+                key: value["value"] for key, value in DEFAULT_SETTINGS.items()
             }
             with open(ini_file, "w") as configfile:
                 config.write(configfile)
@@ -62,13 +62,11 @@ class Settings:
         # set all keys and values like this object attributes
         for key, value in ed_config.items():
             try:
-                value_type = DEFAULT_SETTINGS[key][1]
+                value_type = DEFAULT_SETTINGS[key]["type"]
             except KeyError as e:
                 raise KeyError(
                     f"In easydict.ini file in section EASYDICT are allowed only known keys \n\n {e}"
                 )
-            except IndexError:
-                raise f"There is some internal error: \n\n {e}"
             if value_type == bool:
                 # getboolean method is case insensitive and care about more variants
                 value = ed_config.getboolean(key)
