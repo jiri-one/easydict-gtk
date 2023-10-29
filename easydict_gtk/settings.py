@@ -4,15 +4,13 @@ import configparser
 # internal imports
 from utils import get_xdg_config_home
 
-DEFAULT_SETTINGS = (
-    {  # TODO: for any value we can add validator
-        "win_size_remember": {"value": True, "type": bool},
-        "win_height": {"value": 1200, "type": int},
-        "win_width": {"value": 600, "type": int},
-        "clipboard_scan": {"value": True, "type": bool},
-        "search_language": {"value": "eng", "type": str},
-    }
-)
+DEFAULT_SETTINGS = {  # TODO: for any value we can add validator
+    "win_size_remember": {"value": True, "type": bool},
+    "win_height": {"value": 1200, "type": int},
+    "win_width": {"value": 600, "type": int},
+    "clipboard_scan": {"value": True, "type": bool},
+    "search_language": {"value": "eng", "type": str},
+}
 
 LANGUAGES_DATA = {
     "eng": {
@@ -81,4 +79,5 @@ class Settings:
             raise ValueError(f"Some keys from file were read broken: \n\n {e}")
 
 
+# this should be imported in other files/modules
 ed_setup = Settings(ini_file)

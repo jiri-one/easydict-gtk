@@ -14,7 +14,7 @@ gi.require_version("Gtk", "4.0")
 gi.require_version("Adw", "1")
 
 from gi.repository import Gtk, GLib, GObject, Gio, Adw
-from widgets import MyListViewStrings, SearchBar, FrontPage, MenuButton
+from widgets import ResultListViewStrings, SearchBar, FrontPage, MenuButton
 
 # internal imports
 from settings import images, ed_setup
@@ -52,7 +52,7 @@ class MyWindow(Adw.ApplicationWindow):
 
     def setup_content(self):
         # Simple Listview with strings
-        self.listview_str = MyListViewStrings(self)
+        self.listview_str = ResultListViewStrings(self)
         lw_frame = Gtk.Frame()
         lw_frame.set_valign(Gtk.Align.FILL)
         lw_frame.set_vexpand(True)
