@@ -183,5 +183,3 @@ class ResultListViewStrings(ListViewStrings):
         #     f"Row {ndx} was selected ( {self.store[ndx].get_string()} )"
         # )
         # self.win.page4_label.set_markup(markup)
-
-

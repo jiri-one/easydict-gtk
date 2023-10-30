@@ -14,6 +14,7 @@ from settings import ed_setup, LANGUAGES_DATA as lng_data
 from .dialogs import SettingsDialog
 from .drop_down import LanguageDropdown
 
+
 class SearchBar(Gtk.SearchBar):
     """Wrapper for Gtk.Searchbar Gtk.SearchEntry"""
 
@@ -171,4 +172,3 @@ class SearchBar(Gtk.SearchBar):
             )
         # and then we run search in db to sync toggle button state with results
         self.on_search(button)
-

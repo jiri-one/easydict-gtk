@@ -7,6 +7,10 @@ from .search import SearchBar
 
 
 __all__ = [
-    "LanguageDropdown", "SettingsDialog", "MenuButton", "FrontPage", "ResultListViewStrings",
-    "SearchBar", 
+    "LanguageDropdown",
+    "SettingsDialog",
+    "MenuButton",
+    "FrontPage",
+    "ResultListViewStrings",
+    "SearchBar",
 ]

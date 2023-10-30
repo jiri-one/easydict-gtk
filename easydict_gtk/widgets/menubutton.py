@@ -8,6 +8,7 @@ from gi.repository import Gtk, Gio, GLib, Gdk, GdkPixbuf, GObject, Adw
 from settings import images
 from .dialogs import SettingsDialog
 
+
 class MenuButton(Gtk.MenuButton):
     """
     Wrapper class for at Gtk.Menubutton

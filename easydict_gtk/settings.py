@@ -42,23 +42,24 @@ ini_file = cfg_dir / "easydict.ini"  # set user config file
 
 
 class Settings:
-    def __init__(self, ini_file: Path):
-        config = configparser.ConfigParser()
+    def __init__(self, ini_file):
+        self.ini_file = ini_file
+        self.config = configparser.ConfigParser()
         # check if ini_file exists and if not, create it
         if not ini_file.exists():
-            config["EASYDICT"] = {
+            self.config["EASYDICT"] = {
                 key: value["value"] for key, value in DEFAULT_SETTINGS.items()
             }
             with open(ini_file, "w") as configfile:
-                config.write(configfile)
+                self.config.write(configfile)
         # read the ini file
-        config.read(ini_file)
+        self.config.read(ini_file)
         try:
-            ed_config = config["EASYDICT"]
+            self.ed_config = self.config["EASYDICT"]
         except KeyError:
             raise KeyError("""In easydict.ini file has to be ["EASYDICT"] section!""")
         # set all keys and values like this object attributes
-        for key, value in ed_config.items():
+        for key, value in self.ed_config.items():
             try:
                 value_type = DEFAULT_SETTINGS[key]["type"]
             except KeyError as e:
@@ -67,7 +68,7 @@ class Settings:
                 )
             if value_type == bool:
                 # getboolean method is case insensitive and care about more variants
-                value = ed_config.getboolean(key)
+                value = self.ed_config.getboolean(key)
             elif value_type == int:
                 value = int(value)
             setattr(self, key, value)
@@ -77,6 +78,16 @@ class Settings:
                 assert hasattr(self, key)
         except AssertionError as e:
             raise ValueError(f"Some keys from file were read broken: \n\n {e}")
+
+    def __setattr__(self, attr_name, attr_value):
+        super().__setattr__(attr_name, attr_value)
+        if attr_name in DEFAULT_SETTINGS:
+            self.ed_config[attr_name] = str(attr_value)
+            with open(self.ini_file, "w") as configfile:
+                self.config.write(configfile)
+
+    def write_settings(self, attr, value):
+        setattr(self, attr, value)
 
 
 # this should be imported in other files/modules

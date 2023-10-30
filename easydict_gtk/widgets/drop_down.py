@@ -2,6 +2,7 @@ import gi
 
 gi.require_version("Gtk", "4.0")
 from gi.repository import Gtk, Gio, GLib, Gdk, GdkPixbuf, GObject, Adw
+
 # internal imports
 from settings import images, ed_setup, LANGUAGES_DATA as lng_data
 
@@ -14,6 +15,7 @@ class Item_LngAndFlag(GObject.GObject):
         self.id = id
         self.language = language
         self.flag_file = flag_file
+
 
 class LanguageDropdown(Gtk.DropDown):
     """Custom List for DropDown menu with flags"""

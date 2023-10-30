@@ -7,6 +7,7 @@ from gi.repository import Gtk, Gio, GLib, Gdk, GdkPixbuf, GObject, Adw
 # internal imports
 from settings import images
 
+
 class FrontPage(Gtk.Box):
     """Front page of EasyDict-GTK in one Box"""
 
@@ -47,4 +48,3 @@ class FrontPage(Gtk.Box):
             "\n<big>The first translator which is completely open with dictionary data too.</big>"
         )
         return label
-

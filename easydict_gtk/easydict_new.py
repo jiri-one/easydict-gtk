@@ -21,8 +21,14 @@ from settings import images, ed_setup
 
 
 class MyWindow(Adw.ApplicationWindow):
-    def __init__(self, title, loop, **kwargs):
+    def __init__(self, title, loop, loop2, **kwargs):
         super(MyWindow, self).__init__(**kwargs)
+        self._loop2 = loop2
+        self.task = None
+        self.notify("default-width")
+        self.notify("default-height")
+        self.connect("notify", self.on_size_changed)
+
         self.load_css("ui/search_box.css")
         self.set_default_size(ed_setup.win_width, ed_setup.win_height)
         self.set_title(title)
@@ -81,24 +87,60 @@ class MyWindow(Adw.ApplicationWindow):
             print(f"loading custom styling : {css_fn}")
             self.css_provider = css_provider
 
-    def print_something(self):
-        print("something")
+    async def save_win_size_after_one_sec(self):
+        async with asyncio.TaskGroup() as tg:
+            self.task = tg.create_task(asyncio.sleep(1))
+
+            # actual window size
+            width = self.props.default_width
+            height = self.props.default_height
+
+            GLib.idle_add(ed_setup.write_settings, "win_width", width)
+            GLib.idle_add(ed_setup.write_settings, "win_height", height)
+
+    async def save_window_size(self):
+        create_new_task = False
+        if self.task:
+            self.task.cancel()
+            try:
+                await self.task
+            except asyncio.CancelledError:
+                print(f"canceled: {self.task.cancelled()} or done: {self.task.done()}")
+            if self.task.cancelled() or self.task.done():
+                create_new_task = True
+        else:
+            create_new_task = True
+
+        if create_new_task:
+            await self.save_win_size_after_one_sec()
+
+    def on_size_changed(self, widget, event):
+        if ed_setup.win_size_remember and (
+            event.name == "default-width" or event.name == "default-height"
+        ):
+            asyncio.run_coroutine_threadsafe(self.save_window_size(), self._loop2)
+            # we can save it directly, but better is to limit writing to the disk
+            # ed_setup.write_settings("win_width", self.props.default_width)
+            # ed_setup.write_settings("win_height", self.props.default_height)
 
 
 class Application(Adw.Application):
     """Main Aplication class"""
 
-    def __init__(self, loop):
+    def __init__(self, loop, loop2):
         super().__init__(
             application_id="one.jiri.easydict-gtk",
             flags=Gio.ApplicationFlags.FLAGS_NONE,
         )
         self._loop = loop
+        self._loop2 = loop2
 
     def do_activate(self):
         win = self.props.active_window
         if not win:
-            win = MyWindow("EasyDict-GTK", loop=self._loop, application=self)
+            win = MyWindow(
+                "EasyDict-GTK", loop=self._loop, loop2=self._loop2, application=self
+            )
         win.present()
 
 
@@ -122,10 +164,12 @@ def main(args=sys.argv[1:]):
         # reloader.watch_files(['foo.ini'])
 
         q = Queue()
-        with ThreadPoolExecutor(max_workers=1) as executor:
+        with ThreadPoolExecutor(max_workers=2) as executor:
             executor.submit(run_event_loop, q)
-            loop = q.get()
-            app = Application(loop)
+            loop = q.get()  # loop for search tasks
+            executor.submit(run_event_loop, q)
+            loop2 = q.get()  # loop for window size saving
+            app = Application(loop, loop2)
             app.run()
 
 
