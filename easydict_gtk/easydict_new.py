@@ -21,9 +21,9 @@ from settings import images, ed_setup
 
 
 class MyWindow(Adw.ApplicationWindow):
-    def __init__(self, title, loop, loop2, **kwargs):
+    def __init__(self, title, loop, **kwargs):
         super(MyWindow, self).__init__(**kwargs)
-        self._loop2 = loop2
+        self._loop = loop
         self.task = None
         self.notify("default-width")
         self.notify("default-height")
@@ -118,7 +118,7 @@ class MyWindow(Adw.ApplicationWindow):
         if ed_setup.win_size_remember and (
             event.name == "default-width" or event.name == "default-height"
         ):
-            asyncio.run_coroutine_threadsafe(self.save_window_size(), self._loop2)
+            asyncio.run_coroutine_threadsafe(self.save_window_size(), self._loop)
             # we can save it directly, but better is to limit writing to the disk
             # ed_setup.write_settings("win_width", self.props.default_width)
             # ed_setup.write_settings("win_height", self.props.default_height)
@@ -127,19 +127,18 @@ class MyWindow(Adw.ApplicationWindow):
 class Application(Adw.Application):
     """Main Aplication class"""
 
-    def __init__(self, loop, loop2):
+    def __init__(self, loop):
         super().__init__(
             application_id="one.jiri.easydict-gtk",
             flags=Gio.ApplicationFlags.FLAGS_NONE,
         )
         self._loop = loop
-        self._loop2 = loop2
 
     def do_activate(self):
         win = self.props.active_window
         if not win:
             win = MyWindow(
-                "EasyDict-GTK", loop=self._loop, loop2=self._loop2, application=self
+                "EasyDict-GTK", loop=self._loop, application=self
             )
         win.present()
 
@@ -164,12 +163,10 @@ def main(args=sys.argv[1:]):
         # reloader.watch_files(['foo.ini'])
 
         q = Queue()
-        with ThreadPoolExecutor(max_workers=2) as executor:
+        with ThreadPoolExecutor(max_workers=1) as executor:
             executor.submit(run_event_loop, q)
             loop = q.get()  # loop for search tasks
-            executor.submit(run_event_loop, q)
-            loop2 = q.get()  # loop for window size saving
-            app = Application(loop, loop2)
+            app = Application(loop)
             app.run()
 
 
