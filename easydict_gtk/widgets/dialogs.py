@@ -5,7 +5,7 @@ gi.require_version("Gtk", "4.0")
 from gi.repository import Gtk, Gio, GLib, Gdk, GdkPixbuf, GObject, Adw
 
 # internal imports
-from settings import ed_setup
+from settings import ed_setup, LANGUAGES_DATA as lng_data
 from .drop_down import LanguageDropdown
 
 
@@ -51,11 +51,20 @@ class SettingsDialog(Gtk.Dialog):
         # setting for default language
         label = Gtk.Label.new("Default language for search:")
         dropdown = LanguageDropdown()
+        dropdown.connect("notify", self.on_change)
         box = Gtk.Box()
         box.set_orientation(Gtk.Orientation.HORIZONTAL)
         box.append(label)
         box.append(dropdown)
         self.box.append(box)
+
+    def on_change(self, widget, param_spec):
+        if param_spec.name == "selected-item":
+            selected_item = widget.get_selected_item()
+            # sync setting with actual search language
+            self.win.search.dropdown.set_selected(selected_item.id)
+            # write settings to configuration file
+            ed_setup.search_language = selected_item.language
 
     def __call__(self):
         self.set_visible(True)

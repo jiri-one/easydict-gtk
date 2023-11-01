@@ -45,11 +45,11 @@ class MyWindow(Adw.ApplicationWindow):
         option_btn = MenuButton(self)
         self.search_options = option_btn
         header.pack_start(option_btn)
-        search = SearchBar(loop, self)
+        self.search = SearchBar(loop, self)
         self.front_page = FrontPage()
         self.stack = Adw.ViewStack()
         self.main_box.append(header)
-        self.main_box.append(search)
+        self.main_box.append(self.search)
         self.main_box.append(self.front_page)
         content = self.setup_content()
         self.stack.add(content)
@@ -115,6 +115,11 @@ class MyWindow(Adw.ApplicationWindow):
             await self.save_win_size_after_one_sec()
 
     def on_size_changed(self, widget, event):
+        # if is "Remember window size?" checked in Settings dialog and event came from
+        # "default-width" or "default-height", then we should save the windows size to the
+        # file, but it is not good idea to write it directly with every change of window
+        # size, so we will limit the number of writings with asyncio tasks, where we put
+        # small time delay
         if ed_setup.win_size_remember and (
             event.name == "default-width" or event.name == "default-height"
         ):
@@ -137,9 +142,7 @@ class Application(Adw.Application):
     def do_activate(self):
         win = self.props.active_window
         if not win:
-            win = MyWindow(
-                "EasyDict-GTK", loop=self._loop, application=self
-            )
+            win = MyWindow("EasyDict-GTK", loop=self._loop, application=self)
         win.present()
 
 
