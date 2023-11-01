@@ -18,7 +18,7 @@ class MenuButton(Gtk.MenuButton):
         super(MenuButton, self).__init__()
         self.win = win
         opt_image = Gtk.Image.new_from_file(images["ed_pref_icon.png"])
-        opt_image.set_size_request(50, 50)
+        opt_image.set_size_request(40, 40)
         self.set_child(opt_image)
         self.set_child_visible(True)
         self.create_actions_for_main_window()
