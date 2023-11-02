@@ -5,7 +5,7 @@ import sys
 import os
 from pathlib import Path
 import asyncio
-from concurrent.futures import ThreadPoolExecutor
+from threading import Thread
 from queue import Queue
 
 import gi
@@ -175,11 +175,12 @@ def main(args=sys.argv[1:]):
         # reloader.watch_files(['foo.ini'])
 
         q = Queue()
-        with ThreadPoolExecutor(max_workers=1) as executor:
-            executor.submit(run_event_loop, q)
-            loop = q.get()  # loop for search tasks
-            app = Application(loop)
-            app.run()
+        thread = Thread(target=run_event_loop, args=(q,))
+        thread.daemon = True
+        thread.start()
+        loop = q.get()  # loop for search tasks
+        app = Application(loop)
+        app.run()
 
 
 if __name__ == "__main__":
