@@ -25,8 +25,6 @@ class MyWindow(Adw.ApplicationWindow):
         super(MyWindow, self).__init__(**kwargs)
         self._loop = loop
         self.task = None
-        self.notify("default-width")
-        self.notify("default-height")
         self.connect("notify::default-width", self.on_size_changed)
         self.connect("notify::default-height", self.on_size_changed)
         self.load_css("ui/search_box.css")
@@ -160,7 +158,7 @@ class Application(Adw.Application):
 
 
 def run_event_loop(q):
-    """Run asyncio event loop in ThreadPoolExecutor in another Thread"""
+    """Run asyncio event loop in another Thread"""
     loop = asyncio.new_event_loop()
     q.put(loop)
     loop.run_forever()

@@ -9,7 +9,7 @@ from gi.repository import Gtk, Gio, GLib, Gdk, GdkPixbuf, GObject, Adw
 from settings import images, ed_setup, LANGUAGES_DATA as lng_data
 
 
-class Item_LngAndFlag(GObject.GObject):
+class Item_Language(GObject.GObject):
     """Custom data element for a ListStore (Must be based on GObject)"""
 
     language = GObject.Property(type=str)
@@ -27,7 +27,7 @@ class LanguageDropdown(Gtk.DropDown):
 
     def __init__(self):
         super().__init__()
-        self.list_store = Gio.ListStore.new(item_type=Item_LngAndFlag)
+        self.list_store = Gio.ListStore.new(item_type=Item_Language)
         self.setup_content_for_store()
         self.set_model(self.list_store)
         factory = Gtk.SignalListItemFactory()
@@ -43,7 +43,7 @@ class LanguageDropdown(Gtk.DropDown):
             label = lng_values["label"]
             language = lng_name
             flag = lng_values["flag_file"]
-            self.list_store.append(Item_LngAndFlag(id, label, language, flag))
+            self.list_store.append(Item_Language(id, label, language, flag))
 
     def factory_setup(self, factory, item: Gtk.ListItem):
         box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
@@ -56,7 +56,7 @@ class LanguageDropdown(Gtk.DropDown):
 
     def factory_bind(self, factory, item: Gtk.ListItem):
         box: Gtk.Box = item.get_child()
-        item_data: Item_LngAndFlag = item.get_item()
+        item_data: Item_Language = item.get_item()
         label = box.get_first_child()
         label.set_label(item_data.label)
         label.set_margin_end(10)
