@@ -27,9 +27,10 @@ class MyWindow(Adw.ApplicationWindow):
         self.task = None
         self.notify("default-width")
         self.notify("default-height")
-        self.connect("notify", self.on_size_changed)
-
+        self.connect("notify::default-width", self.on_size_changed)
+        self.connect("notify::default-height", self.on_size_changed)
         self.load_css("ui/search_box.css")
+        # set initial size of the window from settings
         self.set_default_size(ed_setup.win_width, ed_setup.win_height)
         self.set_title(title)
         self.main_box = Gtk.Box()
@@ -55,6 +56,14 @@ class MyWindow(Adw.ApplicationWindow):
         self.stack.add(content)
         # box.append(self.stack)
         self.set_content(self.main_box)
+        self.clipboard = self.get_primary_clipboard()
+        print(self.clipboard)
+        self.clipboard.connect("changed", self.print_me)
+
+    def print_me(self, obj):
+        obj.read_text_async(None, print, None)
+        result = obj.read_text_finish()
+        print(result)
 
     def setup_content(self):
         # Simple Listview with strings
@@ -87,16 +96,18 @@ class MyWindow(Adw.ApplicationWindow):
             print(f"loading custom styling : {css_fn}")
             self.css_provider = css_provider
 
+    def write_windows_size_to_ini_file(self):
+        # actual window size
+        width = self.props.default_width
+        height = self.props.default_height
+        # write it to the disk with GLib.idle_add, because of another Thread
+        GLib.idle_add(ed_setup.write_settings, "win_width", width)
+        GLib.idle_add(ed_setup.write_settings, "win_height", height)
+
     async def save_win_size_after_one_sec(self):
-        async with asyncio.TaskGroup() as tg:
-            self.task = tg.create_task(asyncio.sleep(1))
-
-            # actual window size
-            width = self.props.default_width
-            height = self.props.default_height
-
-            GLib.idle_add(ed_setup.write_settings, "win_width", width)
-            GLib.idle_add(ed_setup.write_settings, "win_height", height)
+        self.task = asyncio.create_task(asyncio.sleep(1))
+        await self.task
+        self.write_windows_size_to_ini_file()
 
     async def save_window_size(self):
         create_new_task = False
@@ -120,9 +131,7 @@ class MyWindow(Adw.ApplicationWindow):
         # file, but it is not good idea to write it directly with every change of window
         # size, so we will limit the number of writings with asyncio tasks, where we put
         # small time delay
-        if ed_setup.win_size_remember and (
-            event.name == "default-width" or event.name == "default-height"
-        ):
+        if ed_setup.win_size_remember:
             asyncio.run_coroutine_threadsafe(self.save_window_size(), self._loop)
             # we can save it directly, but better is to limit writing to the disk
             # ed_setup.write_settings("win_width", self.props.default_width)
