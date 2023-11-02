@@ -8,7 +8,7 @@ DEFAULT_SETTINGS = {  # TODO: for any value we can add validator
     "win_size_remember": {"value": True, "type": bool},
     "win_height": {"value": 1200, "type": int},
     "win_width": {"value": 600, "type": int},
-    "clipboard_scan": {"value": True, "type": bool},
+    "clipboard_scan": {"value": False, "type": bool},
     "search_language": {"value": "eng", "type": str},
 }
 

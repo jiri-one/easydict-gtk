@@ -126,7 +126,6 @@ class SearchBar(Gtk.SearchBar):
         if create_new_task and word != "":
             await self.search_task(word, lng, search_type)
 
-        # NOTE: this part down is now not unnecessary, because we delete content of store in on_search method
         # elif the word is empty, so we will empty the listview
         elif create_new_task and word == "":
             self.show_new_results()
@@ -150,7 +149,7 @@ class SearchBar(Gtk.SearchBar):
             # store.splice(0, len(store))
             # return None
         # get current language settings
-        lng = self.dropdown.get_selected_item().language.lower()
+        lng = self.dropdown.get_selected_item().language
         # get current search type
         search_type = self.search_type
         asyncio.run_coroutine_threadsafe(

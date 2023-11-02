@@ -13,7 +13,7 @@ import gi
 gi.require_version("Gtk", "4.0")
 gi.require_version("Adw", "1")
 
-from gi.repository import Gtk, GLib, GObject, Gio, Adw
+from gi.repository import Gtk, GLib, GObject, Gio, Adw, Gdk
 from widgets import ResultListViewStrings, SearchBar, FrontPage, MenuButton
 
 # internal imports
@@ -44,7 +44,6 @@ class MyWindow(Adw.ApplicationWindow):
         header.set_title_widget(title_label)
         # Add Options button (Menu content is defined inside the MenuButton class)
         option_btn = MenuButton(self)
-        self.search_options = option_btn
         header.pack_start(option_btn)
         self.search = SearchBar(loop, self)
         self.front_page = FrontPage()
@@ -54,16 +53,21 @@ class MyWindow(Adw.ApplicationWindow):
         self.main_box.append(self.front_page)
         content = self.setup_content()
         self.stack.add(content)
-        # box.append(self.stack)
         self.set_content(self.main_box)
-        self.clipboard = self.get_primary_clipboard()
-        print(self.clipboard)
-        self.clipboard.connect("changed", self.print_me)
+        # clipboard related settings
+        self.clipboard = Gdk.Display.get_default().get_clipboard()
+        self.clipboard.connect("changed", self.on_clipboad_changed)
 
-    def print_me(self, obj):
-        obj.read_text_async(None, print, None)
-        result = obj.read_text_finish()
-        print(result)
+    def on_clipboad_changed(self, obj):
+        # when the content of clipboard has changed, then we need to reread the content
+        self.clipboard.read_text_async(None, self.on_paste_text)
+
+    def on_paste_text(self, _clipboard, result):
+        if ed_setup.clipboard_scan:
+            # the content of the clipboard
+            text = self.clipboard.read_text_finish(result)
+            self.search.entry.props.text = text
+            self.search.on_search()
 
     def setup_content(self):
         # Simple Listview with strings
@@ -178,7 +182,7 @@ def main(args=sys.argv[1:]):
         thread = Thread(target=run_event_loop, args=(q,))
         thread.daemon = True
         thread.start()
-        loop = q.get()  # loop for search tasks
+        loop = q.get()  # loop for search tasks and for save window size
         app = Application(loop)
         app.run()
 
