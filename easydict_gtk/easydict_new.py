@@ -64,8 +64,8 @@ class MyWindow(Adw.ApplicationWindow):
         if ed_setup.clipboard_scan:
             # the content of the clipboard
             text = self.clipboard.read_text_finish(result)
-            self.search.entry.props.text = text
-            self.search.on_search(caller_obj=None)
+            if self.search.entry.get_text() != text:
+                self.search.entry.set_text(text)
 
     def setup_content(self):
         # Simple Listview with strings
