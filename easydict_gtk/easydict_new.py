@@ -65,7 +65,7 @@ class MyWindow(Adw.ApplicationWindow):
             # the content of the clipboard
             text = self.clipboard.read_text_finish(result)
             self.search.entry.props.text = text
-            self.search.on_search()
+            self.search.on_search(caller_obj=None)
 
     def setup_content(self):
         # Simple Listview with strings
@@ -176,13 +176,13 @@ def main(args=sys.argv[1:]):
         # monitor an extra file
         # reloader.watch_files(['foo.ini'])
 
-        q = Queue()
-        thread = Thread(target=run_event_loop, args=(q,))
-        thread.daemon = True
-        thread.start()
-        loop = q.get()  # loop for search tasks and for save window size
-        app = Application(loop)
-        app.run()
+    q = Queue()
+    thread = Thread(target=run_event_loop, args=(q,))
+    thread.daemon = True
+    thread.start()
+    loop = q.get()  # loop for search tasks and for save window size
+    app = Application(loop)
+    app.run()
 
 
 if __name__ == "__main__":

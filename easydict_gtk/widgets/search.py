@@ -117,6 +117,7 @@ class SearchBar(Gtk.SearchBar):
                 await self.task
             except asyncio.CancelledError:
                 print(f"canceled: {self.task.cancelled()} or done: {self.task.done()}")
+                self.task = None
 
             if self.task.cancelled() or self.task.done():
                 create_new_task = True
