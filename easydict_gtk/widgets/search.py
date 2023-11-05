@@ -81,9 +81,7 @@ class SearchBar(Gtk.SearchBar):
         store = self.win.listview_str.store
         # remove all search results from current store and add all results together (if there are any)
         store.splice(0, len(store), result_strings)
-        # https://lazka.github.io/pgi-docs/Gtk-4.0/classes/StringList.html#Gtk.StringList.splice
-        # https://lazka.github.io/pgi-docs/#GLib-2.0/functions.html#GLib.idle_add
-        # https://pygobject.readthedocs.io/en/latest/guide/threading.html
+        # link to splice method: https://lazka.github.io/pgi-docs/Gtk-4.0/classes/StringList.html#Gtk.StringList.splice
 
     async def search_task(self, word, lng, search_type):
         # default language for results
@@ -108,6 +106,9 @@ class SearchBar(Gtk.SearchBar):
                 result_strings.append(whole_string)
 
         GLib.idle_add(self.show_new_results, result_strings)
+        # links about GLib.idle_add
+        # https://lazka.github.io/pgi-docs/#GLib-2.0/functions.html#GLib.idle_add
+        # https://pygobject.readthedocs.io/en/latest/guide/threading.html
 
     async def search_in_db(self, word, lng, search_type):
         create_new_task = False
@@ -130,6 +131,9 @@ class SearchBar(Gtk.SearchBar):
         # elif the word is empty, so we will empty the listview
         elif create_new_task and word == "":
             GLib.idle_add(self.show_new_results)
+            # links about GLib.idle_add
+            # https://lazka.github.io/pgi-docs/#GLib-2.0/functions.html#GLib.idle_add
+            # https://pygobject.readthedocs.io/en/latest/guide/threading.html
 
     def on_search(self, caller_obj):
         # get text from search entry
