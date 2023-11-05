@@ -20,7 +20,7 @@ class SQLiteBackend(DBBackend):
     @staticmethod
     def regexp(expr, item):
         """Helper function for search with regex"""
-        reg = re.compile(expr)
+        reg = re.compile(expr, re.IGNORECASE)
         return reg.search(item) is not None
 
     def __init__(self, file):
