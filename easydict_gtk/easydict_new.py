@@ -64,7 +64,7 @@ class MyWindow(Adw.ApplicationWindow):
         if ed_setup.clipboard_scan:
             # the content of the clipboard
             text = self.clipboard.read_text_finish(result)
-            if self.search.entry.get_text() != text:
+            if self.search.entry.get_text().lower() != text.lower():
                 self.search.entry.set_text(text)
 
     def setup_content(self):
