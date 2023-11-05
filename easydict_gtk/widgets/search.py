@@ -80,7 +80,7 @@ class SearchBar(Gtk.SearchBar):
         # and with results we need to update the ListViewString store - it is StringList
         store = self.win.listview_str.store
         # remove all search results from current store and add all results together (if there are any)
-        GLib.idle_add(store.splice, 0, len(store), result_strings)
+        store.splice(0, len(store), result_strings)
         # https://lazka.github.io/pgi-docs/Gtk-4.0/classes/StringList.html#Gtk.StringList.splice
         # https://lazka.github.io/pgi-docs/#GLib-2.0/functions.html#GLib.idle_add
         # https://pygobject.readthedocs.io/en/latest/guide/threading.html
@@ -107,7 +107,7 @@ class SearchBar(Gtk.SearchBar):
                 whole_string = f"""<b>{getattr(item, lng1)}</b>\n {getattr(item, lng2)}{notes}{special}"""
                 result_strings.append(whole_string)
 
-        self.show_new_results(result_strings)
+        GLib.idle_add(self.show_new_results, result_strings)
 
     async def search_in_db(self, word, lng, search_type):
         create_new_task = False
@@ -129,7 +129,7 @@ class SearchBar(Gtk.SearchBar):
 
         # elif the word is empty, so we will empty the listview
         elif create_new_task and word == "":
-            self.show_new_results()
+            GLib.idle_add(self.show_new_results)
 
     def on_search(self, caller_obj):
         # get text from search entry
