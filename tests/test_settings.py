@@ -14,7 +14,7 @@ def cfg_parser():
     return parser
 
 
-def test_settings_init_with_non_existent_file(tmp_path, cfg_parser):
+def test_settings_with_non_existent_file(tmp_path, cfg_parser):
     ini_file = tmp_path / "easydict.ini"  # set user config file
     settings = Settings(ini_file)
     assert ini_file.exists()
@@ -33,10 +33,17 @@ def test_settings_init_with_non_existent_file(tmp_path, cfg_parser):
         assert getattr(settings, key) == value == default_value
 
 
-def test_settings_init_with_empty_file(tmp_path):
+def test_settings_with_empty_file(tmp_path):
+    ini_file = tmp_path / "easydict.ini"  # set user config file
+    ini_file.touch()
+    assert ini_file.exists()
+    with pytest.raises(KeyError, match=r"In easydict.ini file has to be \[EASYDICT\] section!"):
+        settings = Settings(ini_file)
+
+def test_settings_with_empty_easydict_section(tmp_path):
     ...
 
-def test_settings_init_with_non_empty_text_file():
+def test_settings_with_non_empty_text_file():
     ...
 
 def test_setting_with_broken_file():

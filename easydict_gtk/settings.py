@@ -58,7 +58,7 @@ class Settings:
         try:
             self.ed_config = self.config["EASYDICT"]
         except KeyError:
-            raise KeyError("""In easydict.ini file has to be ["EASYDICT"] section!""")
+            raise KeyError("In easydict.ini file has to be [EASYDICT] section!")
         
         for key, value_and_type in DEFAULT_SETTINGS.items():
             type_of_value = value_and_type["type"]
