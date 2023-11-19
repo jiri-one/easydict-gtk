@@ -1,12 +1,37 @@
 from pathlib import Path
+import configparser
+# test imports
+import pytest
 # internal imports
 from easydict_gtk.settings import Settings, DEFAULT_SETTINGS
 
-def test_settings_init_with_non_existent_file(tmp_path):
+@pytest.fixture
+def cfg_parser():
+    def parser(ini_file: Path):
+        config = configparser.ConfigParser()
+        config.read(ini_file)
+        return config
+    return parser
+
+
+def test_settings_init_with_non_existent_file(tmp_path, cfg_parser):
     ini_file = tmp_path / "easydict.ini"  # set user config file
     settings = Settings(ini_file)
     assert ini_file.exists()
-    print(ini_file.read_text())
+    cfg = cfg_parser(ini_file)["EASYDICT"]
+    for key, value_and_type in DEFAULT_SETTINGS.items():
+        type_of_value = value_and_type["type"]
+        default_value = value_and_type["value"]
+        # get actual value from config file or get default value
+        if type_of_value == bool:
+            # getboolean method is case insensitive and care about more variants
+            value = cfg.getboolean(key)
+        elif type_of_value == int:
+            value = cfg.getint(key)
+        else: # value is string
+            value = cfg.get(key)
+        assert getattr(settings, key) == value == default_value
+
 
 def test_settings_init_with_empty_file(tmp_path):
     ...
