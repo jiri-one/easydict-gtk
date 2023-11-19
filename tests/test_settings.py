@@ -6,6 +6,7 @@ def test_settings_init_with_non_existent_file(tmp_path):
     ini_file = tmp_path / "easydict.ini"  # set user config file
     settings = Settings(ini_file)
     assert ini_file.exists()
+    print(ini_file.read_text())
 
 def test_settings_init_with_empty_file(tmp_path):
     ...
