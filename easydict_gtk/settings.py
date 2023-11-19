@@ -10,6 +10,7 @@ DEFAULT_SETTINGS = {  # TODO: for any value we can add validator
     "win_width": {"value": 600, "type": int},
     "clipboard_scan": {"value": False, "type": bool},
     "search_language": {"value": "eng", "type": str},
+    "tray_icon": {"value": False, "type": bool},
 }
 
 LANGUAGES_DATA = {
@@ -48,7 +49,7 @@ class Settings:
         # check if ini_file exists and if not, create it
         if not ini_file.exists():
             self.config["EASYDICT"] = {
-                key: value["value"] for key, value in DEFAULT_SETTINGS.items()
+                key: value_and_type["value"] for key, value_and_type in DEFAULT_SETTINGS.items()
             }
             with open(ini_file, "w") as configfile:
                 self.config.write(configfile)
@@ -58,26 +59,21 @@ class Settings:
             self.ed_config = self.config["EASYDICT"]
         except KeyError:
             raise KeyError("""In easydict.ini file has to be ["EASYDICT"] section!""")
-        # set all keys and values like this object attributes
-        for key, value in self.ed_config.items():
-            try:
-                value_type = DEFAULT_SETTINGS[key]["type"]
-            except KeyError as e:
-                raise KeyError(
-                    f"In easydict.ini file in section EASYDICT are allowed only known keys \n\n {e}"
-                )
-            if value_type == bool:
+        
+        for key, value_and_type in DEFAULT_SETTINGS.items():
+            type_of_value = value_and_type["type"]
+            default_value = value_and_type["value"]
+            # get actual value from config file or get default value
+            if type_of_value == bool:
                 # getboolean method is case insensitive and care about more variants
-                value = self.ed_config.getboolean(key)
-            elif value_type == int:
-                value = int(value)
+                value = self.ed_config.getboolean(key, default_value)
+            elif type_of_value == int:
+                value = self.ed_config.getint(key, default_value)
+            else: # value is string
+                value = self.ed_config.get(key, default_value)
+            # set all keys and values like this object attributes
             setattr(self, key, value)
-        # assert that all keys were read from file and are set
-        try:
-            for key in DEFAULT_SETTINGS:
-                assert hasattr(self, key)
-        except AssertionError as e:
-            raise ValueError(f"Some keys from file were read broken: \n\n {e}")
+
 
     def __setattr__(self, attr_name, attr_value):
         super().__setattr__(attr_name, attr_value)
