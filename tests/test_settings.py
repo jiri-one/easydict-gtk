@@ -85,8 +85,15 @@ def test_settings_with_non_empty_text_file(tmp_path):
         settings = Settings(ini_file3)
 
 
-def test_setting_with_broken_file():
-    ...
+def test_setting_with_bad_value_type(tmp_path):
+    ini_file = tmp_path / "easydict.ini"  # set user config file
+    ini_file.write_text("""
+[EASYDICT]
+win_size_remember = BAD_VALUE_BOOL
+""")
+    assert ini_file.exists()
+    with pytest.raises(ValueError, match="Not a boolean: BAD_VALUE_BOOL"):
+        settings = Settings(ini_file)     
 
 
 def test_settings_with_only_few_config_keys():
