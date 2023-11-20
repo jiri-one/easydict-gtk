@@ -106,7 +106,21 @@ win_height = BAD_VALUE_INT
         settings = Settings(ini_file2)   
     
 
+def test_settings_with_only_few_config_keys(tmp_path, cfg_checker, monkeypatch):
+    ini_file = tmp_path / "easydict.ini"  # set user config file
+    ini_file.write_text("""
+[EASYDICT]
+win_height = 10000
+clipboard_scan = True
+""")
+    assert ini_file.exists()
+    settings = Settings(ini_file)
+    # assert that predefined valued are corect
+    assert settings.win_height == 10000
+    assert settings.clipboard_scan == True
+    # assert that rest of values are correct
+    # our cfg_checker check only against DEFAULT_SETTINGS, so we need to use monkeypatch for test purposes
+    monkeypatch.setitem(DEFAULT_SETTINGS, "win_height", {"value": 10000, "type": int})
+    monkeypatch.setitem(DEFAULT_SETTINGS, "clipboard_scan", {"value": True, "type": bool})
+    cfg_checker(ini_file, settings)
 
-
-def test_settings_with_only_few_config_keys():
-    ...
