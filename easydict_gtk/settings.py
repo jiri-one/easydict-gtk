@@ -54,7 +54,12 @@ class Settings:
             with open(ini_file, "w") as configfile:
                 self.config.write(configfile)
         # read the ini file
-        self.config.read(ini_file)
+        try:
+            self.config.read(ini_file)
+        except configparser.ParsingError as e:
+            e.message = "\n\nSomething went wrong, best solution is to delete this file and let EasyDict to create new one.\n\n" + e.message
+            raise
+
         try:
             self.ed_config = self.config["EASYDICT"]
         except KeyError:
