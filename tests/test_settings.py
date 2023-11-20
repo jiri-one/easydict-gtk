@@ -71,11 +71,18 @@ def test_settings_with_non_empty_text_file(tmp_path):
     assert ini_file.exists()
     with pytest.raises(configparser.ParsingError):
         settings = Settings(ini_file)
-    ini_file2 = tmp_path / "easydict.ini"  # set user config file
+    
+    ini_file2 = tmp_path / "easydict2.ini"  # set user config file
     ini_file2.write_text("asfasdfasdfasdfasdf\n[EASYDICT]\nasfasdfasdf")
-    assert ini_file.exists()
+    assert ini_file2.exists()
     with pytest.raises(configparser.ParsingError):
         settings = Settings(ini_file2)
+    
+    ini_file3 = tmp_path / "easydict3.ini"  # set user config file
+    ini_file3.write_text("asfasdfasdfasdfasdfasfasdfasdf")
+    assert ini_file3.exists()
+    with pytest.raises(configparser.ParsingError):
+        settings = Settings(ini_file3)
 
 
 def test_setting_with_broken_file():
