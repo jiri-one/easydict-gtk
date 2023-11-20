@@ -14,17 +14,20 @@ gi.require_version("Gtk", "4.0")
 gi.require_version("Adw", "1")
 
 from gi.repository import Gtk, GLib, GObject, Gio, Adw, Gdk
-from widgets import ResultListViewStrings, SearchBar, FrontPage, MenuButton
 
 # internal imports
 from settings import images, ed_setup
+from widgets import ResultListViewStrings, SearchBar, FrontPage, MenuButton
+from widgets.tray_icon import get_tray, get_menu
 
 
 class MyWindow(Adw.ApplicationWindow):
-    def __init__(self, title, loop, **kwargs):
+    def __init__(self, title, loop,  **kwargs):
         super(MyWindow, self).__init__(**kwargs)
         self._loop = loop
         self.task = None
+        self.tray = get_tray(app=kwargs["application"])
+        self.menu = get_menu()
         self.connect("notify::default-width", self.on_size_changed)
         self.connect("notify::default-height", self.on_size_changed)
         self.load_css("ui/search_box.css")
