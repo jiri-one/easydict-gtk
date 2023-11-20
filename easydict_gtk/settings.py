@@ -49,7 +49,8 @@ class Settings:
         # check if ini_file exists and if not, create it
         if not ini_file.exists():
             self.config["EASYDICT"] = {
-                key: value_and_type["value"] for key, value_and_type in DEFAULT_SETTINGS.items()
+                key: value_and_type["value"]
+                for key, value_and_type in DEFAULT_SETTINGS.items()
             }
             with open(ini_file, "w") as configfile:
                 self.config.write(configfile)
@@ -57,14 +58,17 @@ class Settings:
         try:
             self.config.read(ini_file)
         except configparser.ParsingError as e:
-            e.message = "\n\nSomething went wrong, best solution is to delete this file and let EasyDict to create new one.\n\n" + e.message
+            e.message = (
+                "\n\nSomething went wrong, best solution is to delete this file and let EasyDict to create new one.\n\n"
+                + e.message
+            )
             raise
 
         try:
             self.ed_config = self.config["EASYDICT"]
         except KeyError:
             raise KeyError("In easydict.ini file has to be [EASYDICT] section!")
-        
+
         for key, value_and_type in DEFAULT_SETTINGS.items():
             type_of_value = value_and_type["type"]
             default_value = value_and_type["value"]
@@ -74,11 +78,10 @@ class Settings:
                 value = self.ed_config.getboolean(key, default_value)
             elif type_of_value == int:
                 value = self.ed_config.getint(key, default_value)
-            else: # value is string
+            else:  # value is string
                 value = self.ed_config.get(key, default_value)
             # set all keys and values like this object attributes
             setattr(self, key, value)
-
 
     def __setattr__(self, attr_name, attr_value):
         super().__setattr__(attr_name, attr_value)
