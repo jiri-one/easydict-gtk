@@ -1,5 +1,6 @@
 from pathlib import Path
 import configparser
+import re
 
 # test imports
 import pytest
@@ -93,7 +94,18 @@ win_size_remember = BAD_VALUE_BOOL
 """)
     assert ini_file.exists()
     with pytest.raises(ValueError, match="Not a boolean: BAD_VALUE_BOOL"):
-        settings = Settings(ini_file)     
+        settings = Settings(ini_file)
+
+    ini_file2 = tmp_path / "easydict2.ini"  # set user config file
+    ini_file2.write_text("""
+[EASYDICT]
+win_height = BAD_VALUE_INT
+""")
+    assert ini_file2.exists()
+    with pytest.raises(ValueError, match=re.escape("invalid literal for int() with base 10: 'BAD_VALUE_INT'")):
+        settings = Settings(ini_file2)   
+    
+
 
 
 def test_settings_with_only_few_config_keys():

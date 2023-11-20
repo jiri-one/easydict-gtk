@@ -72,14 +72,20 @@ class Settings:
         for key, value_and_type in DEFAULT_SETTINGS.items():
             type_of_value = value_and_type["type"]
             default_value = value_and_type["value"]
-            # get actual value from config file or get default value
-            if type_of_value == bool:
-                # getboolean method is case insensitive and care about more variants
-                value = self.ed_config.getboolean(key, default_value)
-            elif type_of_value == int:
-                value = self.ed_config.getint(key, default_value)
-            else:  # value is string
-                value = self.ed_config.get(key, default_value)
+            try:
+                # get actual value from config file or get default value
+                if type_of_value == bool:
+                    # getboolean method is case insensitive and care about more variants
+                    value = self.ed_config.getboolean(key, default_value)
+                elif type_of_value == int:
+                    value = self.ed_config.getint(key, default_value)
+                else:  # value is string
+                    value = self.ed_config.get(key, default_value)
+            except ValueError as e:
+                e.message = (
+                    "\n\nSomething went wrong, you have been writed bad value type for some key, best solution is to delete this file and let EasyDict to create new one.\n\n"
+                )
+                raise
             # set all keys and values like this object attributes
             setattr(self, key, value)
 
