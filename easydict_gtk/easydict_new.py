@@ -22,7 +22,7 @@ from widgets.tray_icon import get_tray, get_menu
 
 
 class MyWindow(Adw.ApplicationWindow):
-    def __init__(self, title, loop,  **kwargs):
+    def __init__(self, title, loop, **kwargs):
         super(MyWindow, self).__init__(**kwargs)
         self._loop = loop
         self.task = None

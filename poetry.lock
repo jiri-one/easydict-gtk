@@ -28,7 +28,7 @@ files = [
 
 [[package]]
 name = "easytray"
-version = "0.1.0"
+version = "0.2.0"
 description = "Python program for applications that want to use the tray icon using KStatusNotifier, but are not written using QT. Examples using GTK4 (PyGObject)."
 optional = false
 python-versions = "^3.11"
@@ -37,12 +37,13 @@ develop = false
 
 [package.dependencies]
 dasbus = "^1.7"
+pygobject = "^3.46.0"
 
 [package.source]
 type = "git"
 url = "https://github.com/jiri-one/easytray.git"
 reference = "HEAD"
-resolved_reference = "943848b47e0adf91c577bd921e059f67783dbbbd"
+resolved_reference = "5c801d360f9d10bfd03db8e959c8421160f9fdfa"
 
 [[package]]
 name = "hupper"
