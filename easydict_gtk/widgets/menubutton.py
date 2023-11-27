@@ -98,7 +98,7 @@ class MenuButton(Gtk.MenuButton):
         about.set_version("0.5")
         about.set_artists(["Jiří Martin"])
         about.set_program_name("EasyDict-GTK")
-        pixbuf_logo = GdkPixbuf.Pixbuf.new_from_file(images["ed_icon.png"])
+        pixbuf_logo = GdkPixbuf.Pixbuf.new_from_file(images["easydict-icon.png"])
         logo = Gdk.Texture.new_for_pixbuf(pixbuf_logo)
         about.set_logo(logo)
 

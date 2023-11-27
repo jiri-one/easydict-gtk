@@ -26,8 +26,8 @@ class MyWindow(Adw.ApplicationWindow):
         super(MyWindow, self).__init__(**kwargs)
         self._loop = loop
         self.task = None
-        self.tray = get_tray(app=kwargs["application"])
-        self.menu = get_menu()
+        self.tray = get_tray(app=kwargs["application"], win=self)
+        self.menu = get_menu(app=kwargs["application"], win=self)
         self.connect("notify::default-width", self.on_size_changed)
         self.connect("notify::default-height", self.on_size_changed)
         self.load_css("ui/search_box.css")

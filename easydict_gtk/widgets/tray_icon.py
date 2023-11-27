@@ -5,7 +5,7 @@ from pathlib import Path
 DBUS_PATH = "/SNIMenu"
 
 
-def get_tray(app):
+def get_tray(app, win):
     icon_image = images["easydict-tray-icon.png"]
     icon_path = install_icon_to_xdg_data_home(Path(icon_image), 285)
     dbus_tray_backend = get_dbus_backend("dasbus")
@@ -27,13 +27,13 @@ def menu_buttons_catcher(action, target):
     print(f"The button {button_label} was pressed.")
 
 
-def get_menu():
+def get_menu(app, win):
     menu = EasyTrayMenu(
         menu_items={
-            "Settings": menu_buttons_catcher,
-            "Help": menu_buttons_catcher,
-            "About": menu_buttons_catcher,
-            "Quit": menu_buttons_catcher,
+            "Settings": lambda *args: win.activate_action("win.settings"),
+            "Help": lambda *args: win.activate_action("win.help"),
+            "About": lambda *args: win.activate_action("win.about"),
+            "Quit": lambda *args: win.activate_action("win.quit"),
         },
         dbus_path=DBUS_PATH,
     )
