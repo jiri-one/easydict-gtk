@@ -17,8 +17,7 @@ from gi.repository import Gtk, GLib, GObject, Gio, Adw, Gdk
 
 # internal imports
 from settings import images, ed_setup
-from widgets import ResultListViewStrings, SearchBar, FrontPage, MenuButton
-from widgets.tray_icon import get_tray, get_menu
+from widgets import ResultListViewStrings, SearchBar, FrontPage, MenuButton, TrayIcon
 
 
 class MyWindow(Adw.ApplicationWindow):
@@ -26,8 +25,7 @@ class MyWindow(Adw.ApplicationWindow):
         super(MyWindow, self).__init__(**kwargs)
         self._loop = loop
         self.task = None
-        self.tray = get_tray(app=kwargs["application"], win=self)
-        self.menu = get_menu(app=kwargs["application"], win=self)
+        self.tray = TrayIcon(app=kwargs["application"], win=self)
         self.connect("notify::default-width", self.on_size_changed)
         self.connect("notify::default-height", self.on_size_changed)
         self.load_css("ui/search_box.css")

@@ -4,6 +4,7 @@ from .dialogs import SettingsDialog
 from .front_page import FrontPage
 from .result_list import ResultListViewStrings
 from .search import SearchBar
+from .tray_icon import TrayIcon
 
 
 __all__ = [
@@ -13,4 +14,5 @@ __all__ = [
     "FrontPage",
     "ResultListViewStrings",
     "SearchBar",
+    "TrayIcon",
 ]
