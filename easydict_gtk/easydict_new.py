@@ -59,7 +59,8 @@ class MyWindow(Adw.ApplicationWindow):
 
     def on_clipboad_changed(self, obj):
         # when the content of clipboard has changed, then we need to reread the content
-        self.clipboard.read_text_async(None, self.on_paste_text)
+        if self.props.visible:
+            self.clipboard.read_text_async(None, self.on_paste_text)
 
     def on_paste_text(self, _clipboard, result):
         if ed_setup.clipboard_scan:

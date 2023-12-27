@@ -16,47 +16,52 @@ class SettingsDialog(Gtk.Dialog):
         self.set_transient_for(win)
         self.set_size_request(800, 800)
         self.set_title("Settings dialog")
-        self.box = Gtk.Box.new(Gtk.Orientation.VERTICAL, 10)
+        self.grid = Gtk.Grid.new()
         self.add_content_to_settings_box()
         sw = Gtk.ScrolledWindow()
-        sw.set_child(self.box)
+        sw.set_child(self.grid)
         frame = Gtk.Frame()
         frame.set_child(sw)
         self.set_child(frame)
 
     def add_content_to_settings_box(self):
-        # Title of the settings column
+        # Title of the settings
         label = Gtk.Label.new("EasyDict settings:")
+        label.set_justify(Gtk.Justification.CENTER)
+        label.set_hexpand(True)
+        self.grid.attach(label, 0, 0, 2, 1) # child, column, row, width, height
+        # two boxes like two columns
 
-        # label.set_justify(Gtk.Justification.CENTER)
-        self.box.append(label)
         # setting for remember window size
-        checkbutton = Gtk.CheckButton.new_with_label("Remember the window size?")
+        label = Gtk.Label.new("Remember the window size?")
+        self.grid.attach(label, 0, 1, 1, 1)
+
+        checkbutton = Gtk.CheckButton.new()
         checkbutton.set_active(ed_setup.win_size_remember)
         checkbutton.props.halign = Gtk.Align.CENTER
         checkbutton.connect(
             "toggled",
             lambda obj: ed_setup.write_settings("win_size_remember", obj.props.active),
         )
-        self.box.append(checkbutton)
+        self.grid.attach(checkbutton, 1, 1, 1, 1)
         # setting for clipboard scan
-        checkbutton = Gtk.CheckButton.new_with_label("Clippboard snan?")
+        label = Gtk.Label.new("Clippboard snan?")
+        self.grid.attach(label, 0, 2, 1, 1)
+        checkbutton = Gtk.CheckButton.new()
         checkbutton.set_active(ed_setup.clipboard_scan)
         checkbutton.props.halign = Gtk.Align.CENTER
         checkbutton.connect(
             "toggled",
             lambda obj: ed_setup.write_settings("clipboard_scan", obj.props.active),
         )
-        self.box.append(checkbutton)
+        self.grid.attach(checkbutton, 1, 2, 1, 1)
         # setting for default language
         label = Gtk.Label.new("Default language for search:")
+        self.grid.attach(label, 0, 3, 1, 1)
         dropdown = LanguageDropdown()
         dropdown.connect("notify::selected-item", self.on_change)
-        box = Gtk.Box()
-        box.set_orientation(Gtk.Orientation.HORIZONTAL)
-        box.append(label)
-        box.append(dropdown)
-        self.box.append(box)
+        self.grid.attach(dropdown, 1, 3, 1, 1)
+
 
     def on_change(self, widget, param_spec):
         selected_item = widget.get_selected_item()
