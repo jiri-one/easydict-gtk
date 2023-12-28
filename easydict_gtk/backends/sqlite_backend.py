@@ -32,10 +32,13 @@ class SQLiteBackend(DBBackend):
             print(f"DB file {self.db_file} not found.")
             exit()
 
-    async def db_init(self):
-        self.conn = await aiosqlite.connect(":memory:")
-        async with aiosqlite.connect(self.db_file) as conn_file:
-            await conn_file.backup(self.conn)
+    async def db_init(self, memory = True):
+        if memory:
+            self.conn = await aiosqlite.connect(":memory:")
+            async with aiosqlite.connect(self.db_file) as conn_file:
+                await conn_file.backup(self.conn)
+        else:
+            self.conn = await aiosqlite.connect(self.db_file)
         await self.conn.create_function("REGEXP", 2, self.regexp)
 
     async def prepare_db(self, db_name: str):
@@ -45,16 +48,16 @@ class SQLiteBackend(DBBackend):
                   (eng TEXT, cze TEXT, notes TEXT,
                    special TEXT, author TEXT)
                 """
-        async with self.conn.execute(sql):
-            pass
+        await self.conn.execute(sql)
+        await self.conn.commit()
 
     async def fill_db(self, raw_file: Path = None):
         """Filling the database with data.
         A method that is not (yet) used in production."""
         if not raw_file:
             raw_file = Path(__file__).parent.parent / "data/en-cs.txt"
-            if not raw_file.exists():
-                raise FileNotFoundError()
+        if not raw_file.exists():
+            raise FileNotFoundError()
 
         data = []
         with open(raw_file) as file:

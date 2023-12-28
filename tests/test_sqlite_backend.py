@@ -14,7 +14,7 @@ async def adb(tmp_path):
     file_db = tmp_path / "test.db"
     file_db.touch()
     async_db = SQLiteBackend(file_db)
-    await async_db.db_init()
+    await async_db.db_init(memory=False)
     try:
         yield async_db
     finally:
@@ -53,6 +53,10 @@ async def test_prepare_db(adb):
     async with adb.conn.execute(*sql) as cursor:
         results = await cursor.fetchall()
         assert results[0][0] == 1  # should find 1 match
+
+    async with adb.conn.execute("SELECT name FROM sqlite_master") as cursor:
+        result = await cursor.fetchone()
+        assert result == (table_name,)  # should find our new table with table_name
 
 
 async def test_fill_db(adb, dummy_file, dummy_data):
