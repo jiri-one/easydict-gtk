@@ -31,8 +31,8 @@ english	czech	notes	specials	authors
 
 
 @pytest.fixture
-def dummy_file(tmp_path, dummy_data):
-    file = tmp_path / "test.db"
+def raw_file(tmp_path, dummy_data):
+    file = tmp_path / "raw_file.txt"
     file.write_text(dummy_data)
     return file
 
@@ -59,9 +59,9 @@ async def test_prepare_db(adb):
         assert result == (table_name,)  # should find our new table with table_name
 
 
-async def test_fill_db(adb, dummy_file, dummy_data):
+async def test_fill_db(adb, raw_file, dummy_data):
     await adb.prepare_db("eng_cze")  # create table
-    await adb.fill_db(dummy_file)  # fill table with dummy data from dummy file
+    await adb.fill_db(raw_file)  # fill table with dummy data from dummy file
     sql = "SELECT * FROM eng_cze"  # get all data from table
     dummy_data = dummy_data.split("\n")  # split dummy data by new line
     dummy_data = [
@@ -74,14 +74,14 @@ async def test_fill_db(adb, dummy_file, dummy_data):
             index += 1
 
 
-async def test_search_in_db(adb, dummy_file):
+async def test_search_in_db(adb, raw_file):
     await adb.prepare_db("eng_cze")  # create table
 
     search = adb.search_in_db(word="test", lang="eng", search_type="fulltext")
     async for x in search:
         assert False  # this will never run if no results are found
 
-    await adb.fill_db(dummy_file)  # fill table with dummy data from dummy file
+    await adb.fill_db(raw_file)  # fill table with dummy data from dummy file
     # and try search again
     async for result in adb.search_in_db(
         word="test", lang="eng", search_type="fulltext"
@@ -90,9 +90,9 @@ async def test_search_in_db(adb, dummy_file):
         assert isinstance(result, Result)  # and result should be correct type
 
 
-async def test_search_in_db_with_all_search_types(adb, dummy_file):
+async def test_search_in_db_with_all_search_types(adb, raw_file):
     await adb.prepare_db("eng_cze")  # create table
-    await adb.fill_db(dummy_file)  # fill table with dummy data from dummy file
+    await adb.fill_db(raw_file)  # fill table with dummy data from dummy file
     # test fulltext search
     async for result in adb.search_in_db(
         word="test", lang="eng", search_type="fulltext"
