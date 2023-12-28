@@ -104,7 +104,7 @@ async def test_search_in_db_with_all_search_types(adb, dummy_file):
         word="english", lang="eng", search_type="whole_word"
     ):
         assert result.eng == "english"
-    # test bad type os search_type parameter
+    # test bad type of search_type parameter
     with pytest.raises(ValueError, match="Unknown search_type argument."):
         async for result in adb.search_in_db(
             word="ehm", lang="eng", search_type="unknown"
