@@ -18,6 +18,8 @@ easytray = {git = "https://github.com/jiri-one/easytray.git"}
 tinydb = "^4.8.0"
 PyGObject-stubs = "^2.10.0"
 hupper = "^1.12"
+pytest = "^7.4.3"
+pytest-asyncio = "^0.23.2"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
