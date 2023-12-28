@@ -14,10 +14,10 @@ gi.require_version("Gtk", "4.0")
 gi.require_version("Adw", "1")
 
 from gi.repository import Gtk, GLib, GObject, Gio, Adw, Gdk
-from widgets import ResultListViewStrings, SearchBar, FrontPage, MenuButton
 
 # internal imports
 from settings import images, ed_setup
+from widgets import ResultListViewStrings, SearchBar, FrontPage, MenuButton, TrayIcon
 
 
 class MyWindow(Adw.ApplicationWindow):
@@ -25,6 +25,7 @@ class MyWindow(Adw.ApplicationWindow):
         super(MyWindow, self).__init__(**kwargs)
         self._loop = loop
         self.task = None
+        self.tray = TrayIcon(app=kwargs["application"], win=self)
         self.connect("notify::default-width", self.on_size_changed)
         self.connect("notify::default-height", self.on_size_changed)
         self.load_css("ui/search_box.css")
@@ -58,7 +59,8 @@ class MyWindow(Adw.ApplicationWindow):
 
     def on_clipboad_changed(self, obj):
         # when the content of clipboard has changed, then we need to reread the content
-        self.clipboard.read_text_async(None, self.on_paste_text)
+        if self.props.visible:
+            self.clipboard.read_text_async(None, self.on_paste_text)
 
     def on_paste_text(self, _clipboard, result):
         if ed_setup.clipboard_scan:

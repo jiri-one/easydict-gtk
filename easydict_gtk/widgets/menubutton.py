@@ -17,7 +17,7 @@ class MenuButton(Gtk.MenuButton):
     def __init__(self, win):
         super(MenuButton, self).__init__()
         self.win = win
-        opt_image = Gtk.Image.new_from_file(images["ed_pref_icon.png"])
+        opt_image = Gtk.Image.new_from_file(images["easydict-pref-icon.png"])
         opt_image.set_size_request(40, 40)
         self.set_child(opt_image)
         self.set_child_visible(True)
@@ -98,7 +98,7 @@ class MenuButton(Gtk.MenuButton):
         about.set_version("0.5")
         about.set_artists(["Jiří Martin"])
         about.set_program_name("EasyDict-GTK")
-        pixbuf_logo = GdkPixbuf.Pixbuf.new_from_file(images["ed_icon.png"])
+        pixbuf_logo = GdkPixbuf.Pixbuf.new_from_file(images["easydict-icon.png"])
         logo = Gdk.Texture.new_for_pixbuf(pixbuf_logo)
         about.set_logo(logo)
 

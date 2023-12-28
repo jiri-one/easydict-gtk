@@ -32,7 +32,7 @@ class FrontPage(Gtk.Box):
         return label
 
     def logo_image(self):
-        logo_pixbuf = GdkPixbuf.Pixbuf.new_from_file(images["ed_icon.png"])
+        logo_pixbuf = GdkPixbuf.Pixbuf.new_from_file(images["easydict-icon.png"])
         print(images.get("ed_icon.png", None))
         image = Gtk.Image.new_from_pixbuf(logo_pixbuf)
         image.set_size_request(500, 500)

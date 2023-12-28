@@ -2,7 +2,7 @@
 name = "easydict-gtk"
 description = "The first open source translator which is completely open with dictionary data too."
 authors = ["jiri.one <nemec@jiri.one>"]
-version = "0" # this value is not used anywhere
+version = "0.5a"
 license = "GPL-3.0-only"
 readme = "README.md"
 exclude = ["easydict_gtk/garbage"]
@@ -10,12 +10,14 @@ exclude = ["easydict_gtk/garbage"]
 
 [tool.poetry.dependencies]
 python = "^3.11"
-PyGObject = "^3.44.0"
-pycairo = "^1.23"
-tinydb = "^4.5.2"
-orjson = "^3.6.4"
+PyGObject = "^3.46.0"
+aiosqlite = "^0.19.0"
+easytray = {git = "https://github.com/jiri-one/easytray.git"}
 
-[tool.poetry.dev-dependencies]
+[tool.poetry.group.dev.dependencies]
+tinydb = "^4.8.0"
+PyGObject-stubs = "^2.10.0"
+hupper = "^1.12"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
