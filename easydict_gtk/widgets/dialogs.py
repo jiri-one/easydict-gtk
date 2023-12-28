@@ -26,7 +26,8 @@ class SettingsDialog(Gtk.Dialog):
 
     def add_content_to_settings_box(self):
         # Title of the settings
-        label = Gtk.Label.new("EasyDict settings:")
+        label = Gtk.Label.new()
+        label.set_markup("\n<b>EasyDict settings:</b>\n")
         label.set_justify(Gtk.Justification.CENTER)
         label.set_hexpand(True)
         self.grid.attach(label, 0, 0, 2, 1) # child, column, row, width, height
@@ -57,8 +58,10 @@ class SettingsDialog(Gtk.Dialog):
         self.grid.attach(checkbutton, 1, 2, 1, 1)
         # setting for default language
         label = Gtk.Label.new("Default language for search:")
+        label.set_hexpand(True)
         self.grid.attach(label, 0, 3, 1, 1)
         dropdown = LanguageDropdown()
+        dropdown.set_hexpand(False)
         dropdown.connect("notify::selected-item", self.on_change)
         self.grid.attach(dropdown, 1, 3, 1, 1)
 
