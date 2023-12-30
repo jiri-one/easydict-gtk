@@ -30,7 +30,7 @@ class SettingsDialog(Gtk.Dialog):
         label.set_markup("\n<b>EasyDict settings:</b>\n")
         label.set_justify(Gtk.Justification.CENTER)
         label.set_hexpand(True)
-        self.grid.attach(label, 0, 0, 2, 1) # child, column, row, width, height
+        self.grid.attach(label, 0, 0, 2, 1)  # child, column, row, width, height
         # two boxes like two columns
 
         # setting for remember window size
@@ -64,7 +64,6 @@ class SettingsDialog(Gtk.Dialog):
         dropdown.set_hexpand(False)
         dropdown.connect("notify::selected-item", self.on_change)
         self.grid.attach(dropdown, 1, 3, 1, 1)
-
 
     def on_change(self, widget, param_spec):
         selected_item = widget.get_selected_item()

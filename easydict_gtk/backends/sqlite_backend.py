@@ -32,7 +32,7 @@ class SQLiteBackend(DBBackend):
             print(f"DB file {self.db_file} not found.")
             exit()
 
-    async def db_init(self, memory = True):
+    async def db_init(self, memory=True):
         if memory:
             self.conn = await aiosqlite.connect(":memory:")
             async with aiosqlite.connect(self.db_file) as conn_file:

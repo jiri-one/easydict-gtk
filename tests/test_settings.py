@@ -72,13 +72,13 @@ def test_settings_with_non_empty_text_file(tmp_path):
     assert ini_file.exists()
     with pytest.raises(configparser.ParsingError):
         settings = Settings(ini_file)
-    
+
     ini_file2 = tmp_path / "easydict2.ini"  # set user config file
     ini_file2.write_text("asfasdfasdfasdfasdf\n[EASYDICT]\nasfasdfasdf")
     assert ini_file2.exists()
     with pytest.raises(configparser.ParsingError):
         settings = Settings(ini_file2)
-    
+
     ini_file3 = tmp_path / "easydict3.ini"  # set user config file
     ini_file3.write_text("asfasdfasdfasdfasdfasfasdfasdf")
     assert ini_file3.exists()
@@ -88,31 +88,40 @@ def test_settings_with_non_empty_text_file(tmp_path):
 
 def test_setting_with_bad_value_type(tmp_path):
     ini_file = tmp_path / "easydict.ini"  # set user config file
-    ini_file.write_text("""
+    ini_file.write_text(
+        """
 [EASYDICT]
 win_size_remember = BAD_VALUE_BOOL
-""")
+"""
+    )
     assert ini_file.exists()
     with pytest.raises(ValueError, match="Not a boolean: BAD_VALUE_BOOL"):
         settings = Settings(ini_file)
 
     ini_file2 = tmp_path / "easydict2.ini"  # set user config file
-    ini_file2.write_text("""
+    ini_file2.write_text(
+        """
 [EASYDICT]
 win_height = BAD_VALUE_INT
-""")
+"""
+    )
     assert ini_file2.exists()
-    with pytest.raises(ValueError, match=re.escape("invalid literal for int() with base 10: 'BAD_VALUE_INT'")):
-        settings = Settings(ini_file2)   
-    
+    with pytest.raises(
+        ValueError,
+        match=re.escape("invalid literal for int() with base 10: 'BAD_VALUE_INT'"),
+    ):
+        settings = Settings(ini_file2)
+
 
 def test_settings_with_only_few_config_keys(tmp_path, cfg_checker, monkeypatch):
     ini_file = tmp_path / "easydict.ini"  # set user config file
-    ini_file.write_text("""
+    ini_file.write_text(
+        """
 [EASYDICT]
 win_height = 10000
 clipboard_scan = True
-""")
+"""
+    )
     assert ini_file.exists()
     settings = Settings(ini_file)
     # assert that predefined valued are corect
@@ -121,6 +130,7 @@ clipboard_scan = True
     # assert that rest of values are correct
     # our cfg_checker check only against DEFAULT_SETTINGS, so we need to use monkeypatch for test purposes
     monkeypatch.setitem(DEFAULT_SETTINGS, "win_height", {"value": 10000, "type": int})
-    monkeypatch.setitem(DEFAULT_SETTINGS, "clipboard_scan", {"value": True, "type": bool})
+    monkeypatch.setitem(
+        DEFAULT_SETTINGS, "clipboard_scan", {"value": True, "type": bool}
+    )
     cfg_checker(ini_file, settings)
-

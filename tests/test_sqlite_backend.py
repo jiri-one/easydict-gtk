@@ -114,3 +114,20 @@ async def test_search_in_db_with_all_search_types(adb, raw_file):
             word="ehm", lang="eng", search_type="unknown"
         ):
             assert False  # this will never run if no results are found
+
+
+async def test_memory_db(tmp_path, raw_file):
+    """All other tests are with db_init(memory=False), so they are operating with real file, but this test is with memory=True"""
+    file_db = tmp_path / "test.db"
+    file_db.touch()
+    async_db = SQLiteBackend(file_db)
+    await async_db.db_init(memory=True)
+    await async_db.prepare_db("eng_cze")  # create table
+    await async_db.fill_db(raw_file)  # fill table with dummy data from dummy file
+    assert file_db.read_text() == ""  # file_db is untouched / empty
+    # test whole_word search on filled memory
+    async for result in async_db.search_in_db(
+        word="english", lang="eng", search_type="whole_word"
+    ):
+        assert result.cze == "czech"
+    await async_db.conn.close()
