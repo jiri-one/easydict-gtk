@@ -10,12 +10,6 @@ from .backend import DBBackend, Result
 FILE_DB = Path(__file__).parent.parent / "dict_data/sqlite_eng-cze.db"
 
 
-async def search_async(word, lang, search_type: str) -> Coroutine | None:
-    adb = SQLiteBackend(FILE_DB)
-    await adb.db_init()
-    return await adb.search_sorted(word, lang, search_type)
-
-
 class SQLiteBackend(DBBackend):
     @staticmethod
     def regexp(expr, item):
@@ -23,7 +17,7 @@ class SQLiteBackend(DBBackend):
         reg = re.compile(expr, re.IGNORECASE)
         return reg.search(item) is not None
 
-    def __init__(self, file):
+    def __init__(self, file=FILE_DB):
         try:
             self.db_file = file
             if not self.db_file.exists():
@@ -77,6 +71,10 @@ class SQLiteBackend(DBBackend):
         await self.conn.executemany("INSERT INTO eng_cze VALUES (?,?,?,?,?)", data)
         # save data
         await self.conn.commit()
+
+    async def search_async(self, word, lang, search_type: str) -> Coroutine | None:
+        """Helper coroutine to call search_sorted coroutine - in the future we can add here some logging or stats."""
+        return await self.search_sorted(word, lang, search_type)
 
     async def search_in_db(self, word, lang, search_type: str) -> AsyncIterator[Result]:
         if search_type == "fulltext":
